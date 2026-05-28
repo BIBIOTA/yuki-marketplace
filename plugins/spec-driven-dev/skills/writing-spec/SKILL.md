@@ -32,11 +32,20 @@ You MUST complete each item in order:
 6. **For each capability, write `specs/{capability}/spec.md`** using the template below. Use `## ADDED Requirements`, `## MODIFIED Requirements`, or `## REMOVED Requirements` as appropriate. Each Requirement must have at least one `#### Scenario:` block with `WHEN` / `THEN` / optional `AND` lines.
 7. **Insert `> See:` references** inside the relevant Scenarios. Reference paths must be relative to the spec file (e.g., `> See: ../../diagrams/01-sequence-login-flow.puml`). Every diagram and design file found in step 2 must appear in at least one `> See:` line across all spec files.
 8. **Run reference enforcement check** — verify every artifact is referenced:
+
+   > **Note**: throughout this skill, `{change-id}` is a placeholder for the actual change ID (e.g., `add-user-auth`). Substitute it before running any command.
+
+   Substitute the actual change ID (e.g., `add-user-auth`) for `<actual-change-id>` before running.
    ```bash
-   artifacts=$(find openspec/changes/{change-id}/diagrams -name "*.puml" 2>/dev/null)
-   [ -f openspec/changes/{change-id}/designs/figma.md ] && artifacts="$artifacts openspec/changes/{change-id}/designs/figma.md"
-   references=$(grep -rE "^> See:" openspec/changes/{change-id}/specs/)
-   for a in $artifacts; do
+   # Replace <actual-change-id> with the change ID for the current task.
+   CHANGE_ID="<actual-change-id>"
+   artifacts_array=()
+   while IFS= read -r f; do
+       [ -n "$f" ] && artifacts_array+=("$f")
+   done < <(find "openspec/changes/$CHANGE_ID/diagrams" -name "*.puml" 2>/dev/null)
+   [ -f "openspec/changes/$CHANGE_ID/designs/figma.md" ] && artifacts_array+=("openspec/changes/$CHANGE_ID/designs/figma.md")
+   references=$(grep -rE "^> See:" "openspec/changes/$CHANGE_ID/specs/" 2>/dev/null)
+   for a in "${artifacts_array[@]}"; do
        name=$(basename "$a")
        echo "$references" | grep -q "$name" || { echo "ERROR: unreferenced artifact: $a"; exit 1; }
    done
