@@ -7,15 +7,39 @@ description: Use when starting any new feature, change, or idea before writing c
 
 Turn ideas into fully formed designs through natural collaborative dialogue, then hand off to writing-plans with a committed spec.
 
-**Language rule:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English.
-
 <HARD-GATE>
 Do NOT invoke any implementation skill, write code, or scaffold files until design.md is approved by the user. This applies to EVERY project regardless of perceived simplicity.
+
+**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English.
 </HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
 
 Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short, but you MUST present it and get approval.
+
+## Checklist
+
+You MUST create a task for each of these items and complete them in order:
+
+1. **Detect language** — use the language of the user's first message; lock it for the whole conversation
+2. **Explore project context** — run `ls`, `git log -10`, read README and CLAUDE.md; detect if this is a frontend project via package.json / next.config / vite.config
+3. **Scope check** — if the request includes multiple independent subsystems, help decompose first; brainstorm only the first sub-project through this session
+4. **Decide change-id** — Propose a tentative change-id from the user's initial description (kebab-case verb+noun: `add-`, `refactor-`, `fix-`, `remove-`). Revise after clarifying questions if the scope or framing shifts.
+5. **Clarifying questions** — one at a time, multiple choice preferred; cover purpose / constraints / success criteria
+6. **Propose 2-3 approaches** — with trade-offs; lead with the recommended option and reason
+7. **Present design in sections** — architecture / components / data flow / error handling / testing; ask after each section
+8. **Explore optional skills:**
+   - "Does this change involve complex component interaction, state machines, or data flow?" — if yes, note for `spec-driven-dev:writing-uml`
+   - "Is this a frontend UI change that needs visual designs?" — if yes, note for `spec-driven-dev:writing-figma`
+   - Record outcomes in design.md as `## Probable next steps`
+9. **Write design doc** to `openspec/changes/{change-id}/design.md` — create directories if needed, then stage and commit it:
+   ```
+   git add openspec/changes/{change-id}/design.md
+   git commit -m "docs: add design for {change-id}"
+   ```
+10. **Spec self-review** — placeholder scan / internal consistency / scope / ambiguity; fix inline, no re-review needed
+11. **User review gate** — say verbatim: "Spec written and committed to `{path}`. Please review and let me know if you want changes before we move to writing-plans."
+12. **Transition** — after user approves, invoke the `spec-driven-dev:writing-plans` skill (NOT the superpowers version)
 
 ## Process Flow
 
@@ -57,26 +81,6 @@ digraph brainstorming {
 ```
 
 The terminal state is invoking `spec-driven-dev:writing-plans`. Do NOT invoke any other implementation skill from this skill.
-
-## Checklist
-
-You MUST create a task for each of these items and complete them in order:
-
-1. **Detect language** — use the language of the user's first message; lock it for the whole conversation
-2. **Explore project context** — run `ls`, `git log -10`, read README and CLAUDE.md; detect if this is a frontend project via package.json / next.config / vite.config
-3. **Scope check** — if the request includes multiple independent subsystems, help decompose first; brainstorm only the first sub-project through this session
-4. **Decide change-id** — kebab-case, verb+noun format: `add-`, `refactor-`, `fix-`, `remove-`; propose one, confirm with user
-5. **Clarifying questions** — one at a time, multiple choice preferred; cover purpose / constraints / success criteria
-6. **Propose 2-3 approaches** — with trade-offs; lead with the recommended option and reason
-7. **Present design in sections** — architecture / components / data flow / error handling / testing; ask after each section
-8. **Explore optional skills:**
-   - "Does this change involve complex component interaction, state machines, or data flow?" — if yes, note for writing-uml
-   - "Is this a frontend UI change that needs visual designs?" — if yes, note for writing-figma
-   - Record outcomes in design.md as `## Probable next steps`
-9. **Write design doc** to `openspec/changes/{change-id}/design.md` — create directories if needed
-10. **Spec self-review** — placeholder scan / internal consistency / scope / ambiguity; fix inline, no re-review needed
-11. **User review gate** — say verbatim: "Spec written and committed to `{path}`. Please review and let me know if you want changes before we move to writing-plans."
-12. **Transition** — after user approves, invoke the `spec-driven-dev:writing-plans` skill (NOT the superpowers version)
 
 ## The Process
 
