@@ -10,7 +10,7 @@ Decompose an approved design into a concrete, reviewable task checklist, then ha
 <HARD-GATE>
 Do NOT invoke `spec-driven-dev:writing-uml`, `spec-driven-dev:writing-figma`, or `spec-driven-dev:writing-spec` until the user has approved tasks.md.
 
-**Language:** All user-facing replies in this skill use the user's input language. Reuse the language detected in design.md or the first user message.
+**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English. Reuse the language detected in design.md or the first user message.
 </HARD-GATE>
 
 ## Checklist
@@ -52,6 +52,7 @@ You MUST create a task for each of these items and complete them in order:
 digraph writing_plans {
     rankdir=TB;
 
+    "Detect language" [shape=box];
     "Read design.md" [shape=box];
     "Validate change-id directory exists" [shape=box];
     "Decompose into tasks" [shape=box];
@@ -63,6 +64,7 @@ digraph writing_plans {
     "Invoke spec-driven-dev:writing-figma" [shape=doublecircle];
     "Invoke spec-driven-dev:writing-spec" [shape=doublecircle];
 
+    "Detect language" -> "Read design.md";
     "Read design.md" -> "Validate change-id directory exists";
     "Validate change-id directory exists" -> "Decompose into tasks";
     "Decompose into tasks" -> "Confirm optional artifacts (UML/Figma)";
@@ -111,5 +113,7 @@ After the user approves tasks.md, transition to exactly one of:
 - `spec-driven-dev:writing-uml` — if PlantUML diagrams were selected
 - `spec-driven-dev:writing-figma` — if Figma designs were selected (and UML was not)
 - `spec-driven-dev:writing-spec` — if no optional artifacts were selected
+
+`spec-driven-dev:writing-uml` also covers the case when **both** UML and Figma were selected — UML runs first, and the writing-uml skill chains to writing-figma when its own transition logic detects that Figma was also selected.
 
 Invoke only the `spec-driven-dev:*` versions via Skill tool. Do NOT invoke `superpowers:writing-uml`, `superpowers:writing-figma`, or `superpowers:writing-spec` — they are different skills with different downstream chains.
