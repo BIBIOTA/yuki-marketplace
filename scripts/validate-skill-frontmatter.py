@@ -1,9 +1,25 @@
-# scripts/validate-skill-frontmatter.py
 import sys
-import yaml
 from pathlib import Path
 
 REQUIRED = {"name", "description"}
+
+def _parse_simple_yaml(text: str) -> dict[str, str] | None:
+    """Parse the constrained YAML subset used in SKILL.md frontmatter.
+    Returns None if input contains unsupported constructs."""
+    out: dict[str, str] = {}
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if ":" not in line:
+            return None
+        key, _, value = line.partition(":")
+        key = key.strip()
+        value = value.strip()
+        if not key or value == "":
+            return None
+        out[key] = value
+    return out
 
 def validate(path: Path) -> list[str]:
     text = path.read_text()
@@ -12,12 +28,9 @@ def validate(path: Path) -> list[str]:
     parts = text.split("---\n", 2)
     if len(parts) < 3:
         return [f"{path}: missing closing '---' frontmatter delimiter"]
-    try:
-        fm = yaml.safe_load(parts[1])
-    except yaml.YAMLError as e:
-        return [f"{path}: invalid YAML: {e}"]
-    if not isinstance(fm, dict):
-        return [f"{path}: frontmatter is not a mapping"]
+    fm = _parse_simple_yaml(parts[1])
+    if fm is None:
+        return [f"{path}: frontmatter uses unsupported YAML (only flat 'key: value' pairs allowed)"]
     missing = REQUIRED - fm.keys()
     if missing:
         return [f"{path}: missing required keys: {sorted(missing)}"]
