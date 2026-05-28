@@ -39,9 +39,19 @@ You MUST create a task for each of these items and complete them in order:
       - `seq-no`: zero-padded two-digit (01, 02, ...)
       - `type`: lowercase kebab-case diagram type (sequence, class, use-case, activity, state, component, er, deployment)
       - `topic`: lowercase kebab-case noun phrase (e.g., login-flow, order-lifecycle)
-5. **Update `design.md`**: append a `## Diagrams` section listing each `.puml` file with its relative path and a one-line description.
-6. **Update `tasks.md`**: in the `## Optional artifacts` section, replace the PlantUML checkbox item with a list of the actually-produced `.puml` files.
-7. **Self-review**: for each `.puml` file, run `plantuml -checkonly {file}.puml` if plantuml is available — verify each parses without error. Confirm all diagrams are referenced in design.md.
+5. **Update `design.md`**: append a `## Diagrams` section listing each diagram as a markdown link with its relative path. For example:
+   ```
+   ## Diagrams
+   - [Sequence: Login Flow](./diagrams/01-sequence-login-flow.puml) — describes how the user logs in via OAuth
+   - [State: Session Lifecycle](./diagrams/02-state-session-lifecycle.puml) — shows session state transitions
+   ```
+6. **Update `tasks.md`**: in the `## Optional artifacts` section, replace the PlantUML checkbox item with a nested list of produced diagrams. For example:
+   ```
+   - [x] PlantUML diagrams:
+     - [01-sequence-login-flow.puml](./diagrams/01-sequence-login-flow.puml)
+     - [02-state-session-lifecycle.puml](./diagrams/02-state-session-lifecycle.puml)
+   ```
+7. **Self-review**: for each `.puml` file, run `plantuml -syntax {file}.puml` if plantuml is available — verify each parses without error. Confirm all diagrams are referenced in design.md.
 8. **Commit**:
    ```bash
    git add openspec/changes/{change-id}/diagrams/*.puml openspec/changes/{change-id}/design.md openspec/changes/{change-id}/tasks.md
@@ -70,7 +80,7 @@ digraph writing_uml {
     "More diagrams selected?" [shape=diamond];
     "Update design.md (## Diagrams)" [shape=box];
     "Update tasks.md (Optional artifacts)" [shape=box];
-    "Self-review\n(plantuml -checkonly)" [shape=box];
+    "Self-review\n(plantuml -syntax)" [shape=box];
     "Commit" [shape=box];
     "writing-figma selected?" [shape=diamond];
     "Invoke spec-driven-dev:writing-figma" [shape=doublecircle];
@@ -88,8 +98,8 @@ digraph writing_uml {
     "More diagrams selected?" -> "Ask subjects for next diagram" [label="yes"];
     "More diagrams selected?" -> "Update design.md (## Diagrams)" [label="no"];
     "Update design.md (## Diagrams)" -> "Update tasks.md (Optional artifacts)";
-    "Update tasks.md (Optional artifacts)" -> "Self-review\n(plantuml -checkonly)";
-    "Self-review\n(plantuml -checkonly)" -> "Commit";
+    "Update tasks.md (Optional artifacts)" -> "Self-review\n(plantuml -syntax)";
+    "Self-review\n(plantuml -syntax)" -> "Commit";
     "Commit" -> "writing-figma selected?";
     "writing-figma selected?" -> "Invoke spec-driven-dev:writing-figma" [label="yes"];
     "writing-figma selected?" -> "Invoke spec-driven-dev:writing-spec" [label="no"];
@@ -124,7 +134,7 @@ Present this as a multi-select prompt. Each row describes what the diagram repre
 ## Preview Detection
 
 1. **Local CLI (preferred):** Check `command -v plantuml`. If found, run `plantuml -tpng {file}.puml`. The user opens the resulting PNG from the local filesystem.
-2. **plantuml.com fallback:** If plantuml is not installed, base64-encode the `.puml` source using the plantuml text-encoding algorithm and construct a URL of the form `https://www.plantuml.com/plantuml/png/{encoded}`. Prompt the user to open the URL in a browser. Encoding algorithm: https://plantuml.com/text-encoding
+2. **plantuml.com fallback:** If plantuml is not installed, encode the `.puml` source using PlantUML's text encoding algorithm (deflate + custom base64 alphabet — see https://plantuml.com/text-encoding for the exact algorithm). Then construct a URL of the form `https://www.plantuml.com/plantuml/png/{encoded}` and prompt the user to open it in a browser.
 
 ## Syntax Reference
 

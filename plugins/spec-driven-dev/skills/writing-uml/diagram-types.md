@@ -28,7 +28,7 @@ Auth --> User: 200 OK {access_token}
 @enduml
 ```
 
-**Common pitfall:** Order participants top-to-bottom in the order they first appear, or arrow lines will visually cross and the diagram becomes hard to follow.
+**Common pitfall:** Forgetting to use `->>` (or `-->`) for asynchronous messages distinct from synchronous `->`. In async API flows (events, message queues), using sync arrows misleads readers about ordering guarantees.
 
 ---
 
@@ -57,7 +57,7 @@ class Session {
     +expiresAt: DateTime
 }
 
-User "1" --> "0..*" Session : owns
+User "1" -- "0..*" Session : owns
 @enduml
 ```
 
@@ -274,7 +274,7 @@ node "CDN (CloudFront)" {
 API --> DB : TCP 5432
 API --> Cache : TCP 6379
 Worker --> DB : TCP 5432
-Assets --> API : origin pull
+Assets --> API : pulls origin on miss
 @enduml
 ```
 
