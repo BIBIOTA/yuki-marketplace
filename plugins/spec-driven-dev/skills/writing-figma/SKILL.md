@@ -46,15 +46,15 @@ You MUST create a task for each of these items and complete them in order:
 7. **Generate designs** — delegate to the chosen figma:* skill. Iterate with the user (revise → preview → approve) until designs are approved.
 8. **Download screenshots** via the `mcp__plugin_figma_figma__get_screenshot` MCP tool. Save each to `openspec/changes/{change-id}/designs/screenshots/{NN}-{state}.png` (e.g., `01-happy.png`, `02-empty.png`, `03-error.png`).
 9. **Write `openspec/changes/{change-id}/designs/figma.md`** using the template in the [figma.md Template](#figmamd-template) section below.
-10. **User review gate** — present `designs/figma.md` to the user with this prompt:
+10. **Self-review** — run the four checks in the [Spec Self-Review](#spec-self-review) section. Fix inline.
+11. **User review gate** — present `designs/figma.md` to the user with this prompt:
     > "designs/figma.md written to `{path}`. Please review the Figma URL, version coverage, state list, shared components, and acceptance criteria. Tell me whether to proceed or make changes."
     Wait for explicit user approval before continuing.
-11. **Update `design.md`**: append a `## Designs` section linking to `./designs/figma.md`. Example:
+12. **Update `design.md`**: append a `## Designs` section linking to `./designs/figma.md`. Example:
     ```
     ## Designs
     - [Figma Designs](./designs/figma.md) — frames and acceptance criteria for {change-id}
     ```
-12. **Self-review** — run the four checks in the [Spec Self-Review](#spec-self-review) section. Fix inline.
 13. **Commit**:
     ```bash
     git add openspec/changes/{change-id}/designs/ openspec/changes/{change-id}/design.md
@@ -94,10 +94,10 @@ digraph writing_figma {
     "User approves designs?" -> "Generate designs via figma:* skill" [label="no, revise"];
     "User approves designs?" -> "Download screenshots" [label="yes"];
     "Download screenshots" -> "Write designs/figma.md";
-    "Write designs/figma.md" -> "User review gate";
+    "Write designs/figma.md" -> "Self-review";
+    "Self-review" -> "User review gate";
     "User review gate" -> "Update design.md (## Designs)";
-    "Update design.md (## Designs)" -> "Self-review";
-    "Self-review" -> "Commit";
+    "Update design.md (## Designs)" -> "Commit";
     "Commit" -> "Invoke spec-driven-dev:writing-spec";
 }
 ```

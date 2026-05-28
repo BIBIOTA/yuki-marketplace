@@ -32,14 +32,15 @@ You MUST create a task for each of these items and complete them in order:
    - "Does this change involve complex component interaction, state machines, or data flow?" — if yes, note for `spec-driven-dev:writing-uml`
    - "Is this a frontend UI change that needs visual designs?" — if yes, note for `spec-driven-dev:writing-figma`
    - Record outcomes in design.md as `## Probable next steps`
-9. **Write design doc** to `openspec/changes/{change-id}/design.md` — create directories if needed, then stage and commit it:
-   ```
-   git add openspec/changes/{change-id}/design.md
-   git commit -m "docs: add design for {change-id}"
-   ```
+9. **Write design doc** to `openspec/changes/{change-id}/design.md` — create directories if needed.
 10. **Spec self-review** — placeholder scan / internal consistency / scope / ambiguity; fix inline, no re-review needed
-11. **User review gate** — say verbatim: "Spec written and committed to `{path}`. Please review and let me know if you want changes before we move to writing-plans."
-12. **Transition** — after user approves, invoke the `spec-driven-dev:writing-plans` skill (NOT the superpowers version)
+11. **User review gate** — say verbatim: "Spec written to `{path}`. Please review and let me know if you want changes before we commit and move to writing-plans."
+12. **Commit** — after user approval, stage and commit:
+    ```
+    git add openspec/changes/{change-id}/design.md
+    git commit -m "docs: add design for {change-id}"
+    ```
+13. **Transition** — after user approves, invoke the `spec-driven-dev:writing-plans` skill (NOT the superpowers version)
 
 ## Process Flow
 
@@ -60,6 +61,7 @@ digraph brainstorming {
     "Write design.md" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
+    "Commit design.md" [shape=box];
     "Invoke writing-plans skill" [shape=doublecircle];
 
     "User message received" -> "Detect language";
@@ -76,7 +78,8 @@ digraph brainstorming {
     "Write design.md" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design.md" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Commit design.md" [label="approved"];
+    "Commit design.md" -> "Invoke writing-plans skill";
 }
 ```
 
