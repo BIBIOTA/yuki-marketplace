@@ -1,0 +1,28 @@
+{
+  "name": "spec-driven-dev",
+  "description": "Spec-driven development pipeline: brainstorming → plans → (UML/Figma) → OpenSpec → SDD/TDD → verification. Each step gated by user review; artifacts converge in openspec/changes/{change-id}/.",
+  "version": "0.1.0",
+  "author": {
+    "name": "BIBIOTA"
+  },
+  "keywords": [
+    "spec-driven",
+    "openspec",
+    "tdd",
+    "sdd",
+    "plantuml",
+    "figma",
+    "brainstorming",
+    "planning"
+  ],
+  "skills": [
+    "./skills/brainstorming/SKILL.md",
+    "./skills/writing-plans/SKILL.md",
+    "./skills/writing-uml/SKILL.md",
+    "./skills/writing-figma/SKILL.md",
+    "./skills/writing-spec/SKILL.md",
+    "./skills/subagent-driven-development/SKILL.md",
+    "./skills/test-driven-development/SKILL.md",
+    "./skills/verification-before-completion/SKILL.md"
+  ]
+}
