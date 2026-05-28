@@ -11,6 +11,11 @@
       "name": "yuki-toolkit",
       "source": "./plugins/yuki-toolkit",
       "description": "整合 Google Calendar、Strava、Notion、Garmin 的個人助理工具包"
+    },
+    {
+      "name": "spec-driven-dev",
+      "source": "./plugins/spec-driven-dev",
+      "description": "Spec-driven development pipeline: brainstorming → plans → (UML/Figma) → OpenSpec → SDD/TDD → verification"
     }
   ]
 }
