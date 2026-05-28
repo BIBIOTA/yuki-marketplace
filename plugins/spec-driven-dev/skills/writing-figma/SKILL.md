@@ -19,14 +19,14 @@ You MUST create a task for each of these items and complete them in order:
 
 1. **Detect language** — reuse from design.md frontmatter or the user's first message. Lock for the conversation.
 2. **Read** `openspec/changes/{change-id}/design.md` and `openspec/changes/{change-id}/tasks.md` completely.
-3. **Frontend project precheck** — check for any of these files in the project root. If NONE are present, prompt the user to confirm Figma is still needed before continuing:
+3. **Frontend project precheck** — check for any of these files or directories in the project root. If NONE are present, prompt the user to confirm Figma is still needed before continuing:
    - `package.json`
    - `next.config.{js,ts,mjs}`
    - `vite.config.{js,ts}`
    - `app/`
    - `pages/`
    - `src/components/`
-4. **Figma plugin precheck** — check whether the `figma:figma-use` skill is available (it appears in the system-reminder skills list). If it is NOT available, abort with:
+4. **Figma plugin precheck** — verify that at least one `figma:*` skill (e.g., `figma:figma-use`, `figma:figma-generate-design`) is loaded in the current Claude session. If none is available, abort with installation instructions:
    > "Install the official figma plugin: `/plugin marketplace add anthropics/claude-plugins` then `/plugin install figma`."
 5. **Three mandatory questions** — ask each question in turn. Record the answers. None may be skipped.
    a. **Versions**: "Do you need 1 variant or multiple A/B/C variants? Multi-variant designs fit UX exploration and stakeholder comparison; single-variant is appropriate when the UX is already settled."
@@ -44,22 +44,23 @@ You MUST create a task for each of these items and complete them in order:
    - Edit existing Figma file / programmatic operations → invoke `figma:figma-use`
    - Code Connect component mapping → invoke `figma:figma-code-connect`
 7. **Generate designs** — delegate to the chosen figma:* skill. Iterate with the user (revise → preview → approve) until designs are approved.
-8. **Download screenshots** via `figma:figma__get_screenshot` MCP tool. Save each file to:
-   `openspec/changes/{change-id}/designs/screenshots/{NN}-{state}.png`
-   (e.g., `01-happy.png`, `02-empty.png`, `03-error.png`)
+8. **Download screenshots** via the `mcp__plugin_figma_figma__get_screenshot` MCP tool. Save each to `openspec/changes/{change-id}/designs/screenshots/{NN}-{state}.png` (e.g., `01-happy.png`, `02-empty.png`, `03-error.png`).
 9. **Write `openspec/changes/{change-id}/designs/figma.md`** using the template in the [figma.md Template](#figmamd-template) section below.
-10. **Update `design.md`**: append a `## Designs` section linking to `./designs/figma.md`. Example:
+10. **User review gate** — present `designs/figma.md` to the user with this prompt:
+    > "designs/figma.md written to `{path}`. Please review the Figma URL, version coverage, state list, shared components, and acceptance criteria. Tell me whether to proceed or make changes."
+    Wait for explicit user approval before continuing.
+11. **Update `design.md`**: append a `## Designs` section linking to `./designs/figma.md`. Example:
     ```
     ## Designs
     - [Figma Designs](./designs/figma.md) — frames and acceptance criteria for {change-id}
     ```
-11. **Self-review** — run the four checks in the [Spec Self-Review](#spec-self-review) section. Fix inline.
-12. **Commit**:
+12. **Self-review** — run the four checks in the [Spec Self-Review](#spec-self-review) section. Fix inline.
+13. **Commit**:
     ```bash
     git add openspec/changes/{change-id}/designs/ openspec/changes/{change-id}/design.md
     git commit -m "docs: add Figma designs for {change-id}"
     ```
-13. **Transition**: invoke `spec-driven-dev:writing-spec`.
+14. **Transition**: invoke `spec-driven-dev:writing-spec`.
 
 ## Process Flow
 
@@ -77,6 +78,7 @@ digraph writing_figma {
     "User approves designs?" [shape=diamond];
     "Download screenshots" [shape=box];
     "Write designs/figma.md" [shape=box];
+    "User review gate" [shape=box];
     "Update design.md (## Designs)" [shape=box];
     "Self-review" [shape=box];
     "Commit" [shape=box];
@@ -92,7 +94,8 @@ digraph writing_figma {
     "User approves designs?" -> "Generate designs via figma:* skill" [label="no, revise"];
     "User approves designs?" -> "Download screenshots" [label="yes"];
     "Download screenshots" -> "Write designs/figma.md";
-    "Write designs/figma.md" -> "Update design.md (## Designs)";
+    "Write designs/figma.md" -> "User review gate";
+    "User review gate" -> "Update design.md (## Designs)";
     "Update design.md (## Designs)" -> "Self-review";
     "Self-review" -> "Commit";
     "Commit" -> "Invoke spec-driven-dev:writing-spec";
