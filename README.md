@@ -37,7 +37,7 @@ codex plugin add spec-driven-dev@yuki-marketplace
 
 個人助理工具包：專業跑步教練 agent + Google Workspace 整合 + MCP server 配置模板。
 
-### 🏃 跑步教練 Agent
+### 🏃 跑步教練 Agent / Skill
 
 專業繁體中文跑步教練代理，提供：
 
@@ -48,12 +48,13 @@ codex plugin add spec-driven-dev@yuki-marketplace
 - 個人化心率區間設定與監控
 - 80/20 訓練強度分配指導
 
-Codex 安裝會將 `agents/running-coach-zh-tw.md` 一起帶入 plugin cache；目前 CLI 驗證只能確認 plugin 安裝狀態與 cache 檔案存在，尚不能從 CLI 證明 agent-level runtime dispatch。
+跑步教練指令只維護一份：`plugins/yuki-toolkit/skills/running-coach-zh-tw/SKILL.md`。Codex 透過 `skills/` 目錄將它載入為 skill；Claude Code 則透過 `.claude-plugin/plugin.json` 的 `agents` 設定指向同一份檔案，作為 agent 使用。
 
 ### Skills
 
 | Skill | 說明 |
 |-------|------|
+| `running-coach-zh-tw` | 繁體中文專業跑步教練，分析 Strava/Garmin/Calendar/Notion 訓練資料 |
 | `gws-reference` | Google Workspace CLI（`gws`）指令速查表 |
 | `notion-article-import` | 將 Notion 文章匯入 bibiota-blog（VitePress Markdown 格式） |
 
@@ -98,7 +99,7 @@ Artifacts 統一存放在 `openspec/changes/{change-id}/`。
 ## 維護規則
 
 - Claude 與 Codex 使用各自的包裝 metadata：`.claude-plugin/*`、`plugins/*/.claude-plugin/plugin.json`、`.agents/plugins/marketplace.json`、`plugins/*/.codex-plugin/plugin.json`。
-- 實際行為文件只維護一份：`plugins/*/skills/` 與 `plugins/*/agents/` 是 Claude/Codex 共用的 source of truth；不要為 Codex 複製第二份長篇 skill 或 agent 內容。
+- 實際行為文件只維護一份：`plugins/*/skills/` 是 Claude/Codex 共用的 source of truth；Claude agent 可以透過 manifest 指向同一份 `SKILL.md`，不要為 Codex 或 Claude 複製第二份長篇 skill/agent 內容。
 - 新增、移除或改名 plugin 能力時，才同步更新 Claude/Codex manifest；日常修改 skill/agent 內容不需要改 manifest。
 - 不要手動修改 Claude `plugin.json` 的 `version`；CI merge 到 `master` 時會自動 bump patch version。Codex manifest version 應與對應 Claude plugin version 保持一致；若版本 bump 流程改變，或 bump 後 Codex manifest 沒有同步，需補上對應更新。
 

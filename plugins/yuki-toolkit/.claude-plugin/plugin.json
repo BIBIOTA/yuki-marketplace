@@ -19,7 +19,7 @@
     "gmail"
   ],
   "agents": [
-    "./agents/running-coach-zh-tw.md"
+    "./skills/running-coach-zh-tw/SKILL.md"
   ],
   "skills": [
     "./skills/gws-reference",
