@@ -17,14 +17,14 @@
     "debugging"
   ],
   "skills": [
-    "./skills/brainstorming/SKILL.md",
-    "./skills/writing-plans/SKILL.md",
-    "./skills/writing-uml/SKILL.md",
-    "./skills/writing-figma/SKILL.md",
-    "./skills/writing-spec/SKILL.md",
-    "./skills/system-debugging/SKILL.md",
-    "./skills/subagent-driven-development/SKILL.md",
-    "./skills/test-driven-development/SKILL.md",
-    "./skills/verification-before-completion/SKILL.md"
+    "./skills/brainstorming",
+    "./skills/writing-plans",
+    "./skills/writing-uml",
+    "./skills/writing-figma",
+    "./skills/writing-spec",
+    "./skills/system-debugging",
+    "./skills/subagent-driven-development",
+    "./skills/test-driven-development",
+    "./skills/verification-before-completion"
   ]
 }

@@ -22,7 +22,7 @@
     "./agents/running-coach-zh-tw.md"
   ],
   "skills": [
-    "./skills/gws-reference/SKILL.md",
-    "./skills/notion-article-import/SKILL.md"
+    "./skills/gws-reference",
+    "./skills/notion-article-import"
   ]
 }
