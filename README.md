@@ -1,14 +1,30 @@
 # Yuki Marketplace
 
-個人 Claude Code plugin marketplace（BIBIOTA/my-claude-code）。
+個人 Claude Code / Codex plugin marketplace（BIBIOTA/my-claude-code）。
 
 ## 快速安裝
+
+### Claude Code
 
 ```bash
 # 在 Claude Code 中執行
 /plugin marketplace add BIBIOTA/my-claude-code
 /plugin install yuki-toolkit@yuki-marketplace
 /plugin install spec-driven-dev@yuki-marketplace
+```
+
+### Codex
+
+```bash
+# 本機開發版本
+codex plugin marketplace add /Users/bibiota/Documents/projects/my-claude-code
+codex plugin add yuki-toolkit@yuki-marketplace
+codex plugin add spec-driven-dev@yuki-marketplace
+
+# GitHub repo 版本
+codex plugin marketplace add BIBIOTA/my-claude-code
+codex plugin add yuki-toolkit@yuki-marketplace
+codex plugin add spec-driven-dev@yuki-marketplace
 ```
 
 安裝後需手動設定 MCP servers，詳見 [MCP 配置指南](plugins/yuki-toolkit/mcp-config.md)。
@@ -27,6 +43,8 @@
 - Notion 訓練記錄與課表同步
 - 個人化心率區間設定與監控
 - 80/20 訓練強度分配指導
+
+Codex 安裝會將 `agents/running-coach-zh-tw.md` 一起帶入 plugin cache；目前 CLI 驗證只能確認 plugin 安裝狀態與 cache 檔案存在，尚不能從 CLI 證明 agent-level runtime dispatch。
 
 ### Skills
 
@@ -70,7 +88,15 @@ Artifacts 統一存放在 `openspec/changes/{change-id}/`。
 ## 前置需求
 
 - [Claude Code](https://claude.com/claude-code) CLI
+- Codex CLI
 - 各 MCP server 對應的帳號和 API 認證（詳見配置指南）
+
+## 維護規則
+
+- Claude 與 Codex 使用各自的包裝 metadata：`.claude-plugin/*`、`plugins/*/.claude-plugin/plugin.json`、`.agents/plugins/marketplace.json`、`plugins/*/.codex-plugin/plugin.json`。
+- 實際行為文件只維護一份：`plugins/*/skills/` 與 `plugins/*/agents/` 是 Claude/Codex 共用的 source of truth；不要為 Codex 複製第二份長篇 skill 或 agent 內容。
+- 新增、移除或改名 plugin 能力時，才同步更新 Claude/Codex manifest；日常修改 skill/agent 內容不需要改 manifest。
+- 不要手動修改 Claude `plugin.json` 的 `version`；CI merge 到 `master` 時會自動 bump patch version。Codex manifest version 應與對應 Claude plugin version 保持一致；若版本 bump 流程改變，或 bump 後 Codex manifest 沒有同步，需補上對應更新。
 
 ## 授權
 
