@@ -1,6 +1,7 @@
 ---
 name: writing-figma
-description: Use when tasks.md marks Figma designs as required - thin orchestrator over the official figma:* skills (figma-generate-design, figma-generate-library, figma-use, figma-code-connect). Enforces three mandatory design considerations (version variants, state coverage, shared component reuse), downloads screenshots, and writes openspec/changes/{change-id}/designs/figma.md with acceptance criteria for downstream verification.
+description: |
+  Use when tasks.md marks Figma designs as required - thin orchestrator over the official figma:* skills (figma-generate-design, figma-generate-library, figma-use, figma-code-connect). Enforces three mandatory design considerations (version variants, state coverage, shared component reuse), downloads screenshots, and writes openspec/changes/{change-id}/designs/figma.md with acceptance criteria for downstream verification.
 ---
 
 # Writing Figma Designs

@@ -1,6 +1,7 @@
 ---
 name: writing-spec
-description: Use when design.md, tasks.md, and any UML/Figma artifacts exist in openspec/changes/{change-id}/ - produces OpenSpec-compliant proposal.md and one or more specs/{capability}/spec.md using ADDED/MODIFIED/REMOVED Requirements with WHEN/THEN Scenarios; mandates that every diagram and design artifact be referenced via '> See: ...' from at least one requirement; validates with `openspec validate --strict`.
+description: |
+  Use when design.md, tasks.md, and any UML/Figma artifacts exist in openspec/changes/{change-id}/ - produces OpenSpec-compliant proposal.md and one or more specs/{capability}/spec.md using ADDED/MODIFIED/REMOVED Requirements with WHEN/THEN Scenarios; mandates that every diagram and design artifact be referenced via '> See: ...' from at least one requirement; validates with `openspec validate --strict`.
 ---
 
 # Writing OpenSpec Change Proposals

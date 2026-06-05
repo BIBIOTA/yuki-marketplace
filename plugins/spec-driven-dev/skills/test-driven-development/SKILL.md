@@ -1,6 +1,7 @@
 ---
 name: test-driven-development
-description: Use when spec is approved and implementation should follow Red-Green-Refactor cycles - reads openspec/changes/{change-id}/ and for each task converts the cited '#### Scenario:' entries into failing tests with names matching scenario names (for traceability), then drives minimal implementation, then refactors. Marks visual/e2e checks for Figma-referenced tasks as deferred to verification-before-completion.
+description: |
+  Use when spec is approved and implementation should follow Red-Green-Refactor cycles - reads openspec/changes/{change-id}/ and for each task converts the cited '#### Scenario:' entries into failing tests with names matching scenario names (for traceability), then drives minimal implementation, then refactors. Marks visual/e2e checks for Figma-referenced tasks as deferred to verification-before-completion.
 ---
 
 # Test-Driven Development

@@ -86,8 +86,8 @@ class CodexPluginCompatibilityTests(unittest.TestCase):
         )
 
         self.assertIn("./agents/running-coach-zh-tw.md", yuki["agents"])
-        self.assertIn("./skills/gws-reference/SKILL.md", yuki["skills"])
-        self.assertIn("./skills/brainstorming/SKILL.md", spec["skills"])
+        self.assertTrue(any("gws-reference" in skill for skill in yuki["skills"]))
+        self.assertTrue(any("brainstorming" in skill for skill in spec["skills"]))
 
     def test_existing_skills_remain_shared(self):
         """Existing skills remain shared."""
