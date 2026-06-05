@@ -1,6 +1,6 @@
 # Yuki Marketplace
 
-個人 Claude Code / Codex plugin marketplace（BIBIOTA/my-claude-code）。
+個人 Claude Code / Codex plugin marketplace（BIBIOTA/yuki-marketplace）。
 
 ## 快速安裝
 
@@ -8,7 +8,7 @@
 
 ```bash
 # 在 Claude Code 中執行
-/plugin marketplace add BIBIOTA/my-claude-code
+/plugin marketplace add BIBIOTA/yuki-marketplace
 /plugin install yuki-toolkit@yuki-marketplace
 /plugin install spec-driven-dev@yuki-marketplace
 ```
@@ -19,14 +19,14 @@
 
 ```bash
 # 本機開發版本
-codex plugin marketplace add /Users/bibiota/Documents/projects/my-claude-code
+codex plugin marketplace add /Users/bibiota/Documents/projects/yuki-marketplace
 codex plugin add yuki-toolkit@yuki-marketplace
 codex plugin add spec-driven-dev@yuki-marketplace
 ```
 
 ```bash
 # GitHub repo 版本
-codex plugin marketplace add BIBIOTA/my-claude-code
+codex plugin marketplace add BIBIOTA/yuki-marketplace
 codex plugin add yuki-toolkit@yuki-marketplace
 codex plugin add spec-driven-dev@yuki-marketplace
 ```
