@@ -22,8 +22,9 @@ Findings:
   declare an explicit `agents` field.
 - The installed Figma plugin still carries plugin-level files under `agents/`.
 - Figma command files reference agent names such as
-  `figma-implementation-agent`, showing that plugin-carried agent files are a
-  supported convention even when the plugin manifest does not list `agents`.
+  `figma-implementation-agent`, suggesting that plugin-carried agent files are
+  an established convention even when the plugin manifest does not list
+  `agents`.
 - Figma Markdown agent files are plain prompt files. The running coach file is
   a Claude-style agent file with YAML frontmatter including `name`,
   `description`, and `model: sonnet`.
@@ -87,6 +88,7 @@ Result:
 The current Codex CLI commands checked were:
 
 ```sh
+codex --version
 codex --help
 codex exec --help
 codex plugin --help
@@ -96,6 +98,7 @@ codex plugin add --help
 
 Finding:
 
+- The checked CLI version was `codex-cli 0.137.0`.
 - Codex exposes plugin-level listing and install state through
   `codex plugin list`.
 - The checked CLI version does not expose an agent-level list command or a
@@ -115,7 +118,8 @@ as the preferred source of truth because:
 - Codex local plugin install copies the `agents/` directory into the plugin
   cache.
 - The install and listing flow succeeds with the running coach file present.
-- No evidence was found that direct agent handling fails.
+- No install-time or discovery-time failure was observed with the agent file
+  present.
 
 Task 2.3 is not needed for now. A thin skill wrapper should only be added if a
 future runtime-level Codex check shows that the cached agent file cannot be used
