@@ -63,4 +63,6 @@
 
 ## Optional artifacts
 - [ ] PlantUML diagrams (spec-driven-dev:writing-uml)
+  - deferred: Not required; this change is packaging metadata, documentation, and validation without complex runtime flow or state machine.
 - [ ] Figma designs (spec-driven-dev:writing-figma)
+  - deferred: Not required; this change has no frontend UI or visual design surface.
