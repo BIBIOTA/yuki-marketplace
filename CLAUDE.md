@@ -7,7 +7,7 @@
 ```
 plugins/yuki-toolkit/
 ├── .claude-plugin/plugin.json   # plugin 註冊（agents, skills, metadata）
-├── .codex-plugin/plugin.json    # Codex plugin 註冊（shared skills metadata）
+├── .codex-plugin/plugin.json    # Codex plugin 註冊（shared content metadata）
 ├── agents/                       # Agent 定義（.md frontmatter 格式）
 ├── skills/                       # Skill 定義（.md frontmatter 格式）
 └── mcp-config.md                 # MCP server 設定指南

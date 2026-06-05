@@ -15,12 +15,16 @@
 
 ### Codex
 
+以下安裝來源擇一執行。
+
 ```bash
 # 本機開發版本
 codex plugin marketplace add /Users/bibiota/Documents/projects/my-claude-code
 codex plugin add yuki-toolkit@yuki-marketplace
 codex plugin add spec-driven-dev@yuki-marketplace
+```
 
+```bash
 # GitHub repo 版本
 codex plugin marketplace add BIBIOTA/my-claude-code
 codex plugin add yuki-toolkit@yuki-marketplace
