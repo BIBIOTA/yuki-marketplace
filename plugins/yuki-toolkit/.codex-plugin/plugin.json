@@ -1,0 +1,40 @@
+{
+  "name": "yuki-toolkit",
+  "version": "1.1.3",
+  "description": "個人助理工具包：專業跑步教練 agent + Google Workspace 整合 + MCP server 配置模板",
+  "author": {
+    "name": "BIBIOTA"
+  },
+  "keywords": [
+    "running",
+    "strava",
+    "garmin",
+    "calendar",
+    "notion",
+    "google-workspace",
+    "gws",
+    "drive",
+    "sheets",
+    "docs",
+    "gmail"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Yuki Toolkit",
+    "shortDescription": "Running coach and Google Workspace personal toolkit",
+    "longDescription": "個人助理工具包，提供繁體中文跑步教練 agent、Google Workspace CLI 參考，以及 Notion 文章匯入工作流程。Skill 和 agent 指令內容維持在 shared files 中。",
+    "developerName": "BIBIOTA",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use my running coach workflow",
+      "Look up Google Workspace CLI commands",
+      "Import a Notion article into bibiota-blog"
+    ],
+    "screenshots": []
+  }
+}

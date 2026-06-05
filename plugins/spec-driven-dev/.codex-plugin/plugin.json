@@ -1,0 +1,38 @@
+{
+  "name": "spec-driven-dev",
+  "version": "0.1.0",
+  "description": "Spec-driven development pipeline: brainstorming → plans → (UML/Figma) → OpenSpec → SDD/TDD → verification. Each step gated by user review; artifacts converge in openspec/changes/{change-id}/.",
+  "author": {
+    "name": "BIBIOTA"
+  },
+  "keywords": [
+    "spec-driven",
+    "openspec",
+    "tdd",
+    "sdd",
+    "plantuml",
+    "figma",
+    "brainstorming",
+    "planning",
+    "debugging"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Spec Driven Dev",
+    "shortDescription": "OpenSpec workflow from brainstorming through verification",
+    "longDescription": "Spec-driven development pipeline for turning ideas into approved designs, plans, OpenSpec requirements, implementation, and verification with explicit review gates.",
+    "developerName": "BIBIOTA",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Start a spec-driven change",
+      "Turn an approved design into tasks",
+      "Verify an OpenSpec implementation"
+    ],
+    "screenshots": []
+  }
+}
