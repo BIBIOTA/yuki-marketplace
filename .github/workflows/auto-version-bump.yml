@@ -13,20 +13,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Bump patch version in plugin.json
+      - name: Bump patch version in plugin manifests
         run: |
-          FILE="plugins/yuki-toolkit/.claude-plugin/plugin.json"
-          CURRENT=$(jq -r '.version' "$FILE")
+          CLAUDE_FILE="plugins/yuki-toolkit/.claude-plugin/plugin.json"
+          CODEX_FILE="plugins/yuki-toolkit/.codex-plugin/plugin.json"
+          CURRENT=$(jq -r '.version' "$CLAUDE_FILE")
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
           NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-          jq --arg v "$NEW_VERSION" '.version = $v' "$FILE" > tmp.json && mv tmp.json "$FILE"
+          jq --arg v "$NEW_VERSION" '.version = $v' "$CLAUDE_FILE" > tmp.json && mv tmp.json "$CLAUDE_FILE"
+          jq --arg v "$NEW_VERSION" '.version = $v' "$CODEX_FILE" > tmp.json && mv tmp.json "$CODEX_FILE"
           echo "Bumped version: $CURRENT -> $NEW_VERSION"
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add plugins/yuki-toolkit/.claude-plugin/plugin.json
+          git add plugins/yuki-toolkit/.claude-plugin/plugin.json plugins/yuki-toolkit/.codex-plugin/plugin.json
           git diff --cached --quiet && echo "No version change needed" && exit 0
           git commit -m "chore: bump plugin version to $(jq -r '.version' plugins/yuki-toolkit/.claude-plugin/plugin.json)"
           git push
