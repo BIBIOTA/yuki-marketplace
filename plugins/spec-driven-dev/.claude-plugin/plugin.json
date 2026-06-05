@@ -13,7 +13,8 @@
     "plantuml",
     "figma",
     "brainstorming",
-    "planning"
+    "planning",
+    "debugging"
   ],
   "skills": [
     "./skills/brainstorming/SKILL.md",
@@ -21,6 +22,7 @@
     "./skills/writing-uml/SKILL.md",
     "./skills/writing-figma/SKILL.md",
     "./skills/writing-spec/SKILL.md",
+    "./skills/system-debugging/SKILL.md",
     "./skills/subagent-driven-development/SKILL.md",
     "./skills/test-driven-development/SKILL.md",
     "./skills/verification-before-completion/SKILL.md"
