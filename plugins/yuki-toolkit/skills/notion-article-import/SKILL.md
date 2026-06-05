@@ -32,6 +32,7 @@ Ask (or infer from context):
 | `slug` | Kebab-case summary of the title (e.g. `jwt-token`, `space-complexity`) |
 | `tags` | Infer from content topic (e.g. `Algorithm`, `Backend`, `Python`, `Authentication`) |
 | `description` | One-sentence summary of the article in Traditional Chinese |
+| `avatar` | For Daily Questions Challenge articles: always `/daily-questions-challenge.png` |
 | `index-category` | The section heading to add the link under in the pinned index (e.g. `演算法`, `Backend`, `Database`) |
 
 File naming convention: `YYYY-MM-DD-<slug>.md`
@@ -76,6 +77,16 @@ Rules:
 - Remove empty Notion blocks
 - Replace any external URLs that point to the same blog content with relative repo links (e.g. replace a ChatGPT or Notion URL that refers to another blog article with `./YYYY-MM-DD-slug.md`)
 
+### Handling Notion inline images
+
+Notion images appear as S3 pre-signed URLs (containing `prod-files-secure.s3.amazonaws.com` and `X-Amz-Expires`). These URLs expire within 1 hour of the page fetch.
+
+For each inline image found:
+1. Download it immediately with `curl -s -o /tmp/<slug>-image-<n>.png "<url>"` and verify HTTP 200.
+2. Copy to `docs/public/<slug>-image-<n>.png` (use a descriptive name, e.g. `webrtc-architecture.png`).
+3. Replace the Notion URL in the Markdown with `/` + the filename (e.g. `![說明文字](/webrtc-architecture.png)`).
+4. If the URL has already expired (non-200 response), note this to the user and skip the image — do not leave broken `<img>` tags in the article.
+
 ## Step 4 — Create the post file
 
 **Path:** `docs/<category>/posts/<date>-<slug>.md`
@@ -88,6 +99,7 @@ layout: doc
 title: "<title>"
 description: <description>
 date: <YYYY-MM-DD>
+avatar: /daily-questions-challenge.png
 tags:
   - <Tag1>
   - <Tag2>
@@ -163,3 +175,5 @@ Confirm:
 | Wrong `layout` value | Always `layout: doc` for posts |
 | Category `index-category` doesn't match existing headings | Check exact heading text before adding a new section |
 | Forgetting `<ScrollToTopBtn />` | All posts include both `<ArticleTitle />` and `<ScrollToTopBtn />` |
+| Missing `avatar` field | Daily Questions Challenge posts must have `avatar: /daily-questions-challenge.png` in frontmatter |
+| Notion image left as broken S3 URL | Download immediately (URL expires in 1hr), copy to `docs/public/`, use `/filename.png` path |
