@@ -18,6 +18,7 @@ Do NOT invoke `spec-driven-dev:writing-uml`, `spec-driven-dev:writing-figma`, or
 You MUST create a task for each of these items and complete them in order:
 
 1. **Detect language** — reuse the language from design.md frontmatter, or fall back to the user's first message language. Lock for the conversation.
+1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight). If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？". On "resume" invoke `spec-driven-dev:resume`. On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
 2. **Read `openspec/changes/{change-id}/design.md`** completely.
 3. **Validate change-id and directory exist.** If not, escalate: "design.md not found — return to spec-driven-dev:brainstorming."
 4. **Decompose into bite-sized tasks.** Each task entry must include:
@@ -53,6 +54,8 @@ digraph writing_plans {
     rankdir=TB;
 
     "Detect language" [shape=box];
+    "In-flight change precheck" [shape=diamond];
+    "Invoke spec-driven-dev:resume" [shape=doublecircle];
     "Read design.md" [shape=box];
     "Validate change-id directory exists" [shape=box];
     "Decompose into tasks" [shape=box];
@@ -64,7 +67,9 @@ digraph writing_plans {
     "Invoke spec-driven-dev:writing-figma" [shape=doublecircle];
     "Invoke spec-driven-dev:writing-spec" [shape=doublecircle];
 
-    "Detect language" -> "Read design.md";
+    "Detect language" -> "In-flight change precheck";
+    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="resume"];
+    "In-flight change precheck" -> "Read design.md" [label="新 (warn + proceed) / none"];
     "Read design.md" -> "Validate change-id directory exists";
     "Validate change-id directory exists" -> "Decompose into tasks";
     "Decompose into tasks" -> "Confirm optional artifacts (UML/Figma)";
@@ -90,12 +95,46 @@ Use this template when writing `openspec/changes/{change-id}/tasks.md`:
   - Acceptance: WHEN {context} THEN {expected outcome}
   - Depends on: -
   - Independence: independent | serial | parallel-safe
-- [ ] 1.2 ...
+  - status: not_started
+- [ ] 1.2 {Task description}
+  - Acceptance: WHEN {context} THEN {expected outcome}
+  - Depends on: 1.1
+  - Independence: serial
+  - status: not_started
 
 ## Optional artifacts
 - [x] PlantUML diagrams (spec-driven-dev:writing-uml) — required types: sequence, state
 - [ ] Figma designs (spec-driven-dev:writing-figma)
 ````
+
+### Task status state machine
+
+Every task entry MUST carry a `- status: {state}` sub-bullet. New tasks are written with `status: not_started`; downstream skills (SDD, TDD, verification, resume) update the status on every transition.
+
+Allowed states:
+
+- `not_started` — task has not been picked up yet (initial state for every new task)
+- `in_progress` — actively being implemented in the current session (at most ONE per change at any time)
+- `passing` — implementation complete, tests / reviews green, terminal success state
+- `blocked` — implementer paused (BLOCKED / NEEDS_CONTEXT or TDD step cannot proceed); resumable later
+
+Allowed transitions:
+
+- `not_started → in_progress`
+- `in_progress → passing`
+- `in_progress → blocked`
+- `blocked → in_progress`
+
+Forbidden transitions (any of these is a spec violation — skills MUST raise an error rather than silently rewrite):
+
+- `not_started → passing` (work cannot skip implementation)
+- `not_started → blocked` (cannot block work that has not started)
+- `passing → not_started`, `passing → in_progress`, `passing → blocked` (`passing` is terminal; reopen via a new change, never by mutating status)
+- `blocked → not_started` (resume via `blocked → in_progress`, never by erasing progress)
+- `blocked → passing` (must re-enter `in_progress` so the unblock is recorded)
+- any state → itself (no-op self-transitions are not recorded)
+
+Single-in-progress invariant: across all tasks in a change, at most ONE task may have `status: in_progress` at any time. SDD and TDD assert this before dispatching new work; `resume` raises an error without auto-fixing when the invariant is violated.
 
 ## Spec Self-Review
 
