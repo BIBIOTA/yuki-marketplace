@@ -75,11 +75,13 @@ codex plugin add spec-driven-dev@yuki-marketplace
 Spec-driven development pipeline：從構想到實作的完整流程，每個步驟都有使用者審核把關。
 
 Artifacts 統一存放在 `openspec/changes/{change-id}/`。
+`progress.md` 是跨 session resume anchor，由 SDD/TDD/verification 在狀態轉換時寫入。
 
 ### Skills
 
 | Skill | 說明 |
 |-------|------|
+| `resume` | session 入口；偵測 in-flight change 並路由回對應 skill |
 | `brainstorming` | 開始任何新功能前探索需求與設計方案 |
 | `writing-plans` | 將 design.md 分解為帶 acceptance criteria 的 tasks.md |
 | `writing-uml` | 用 PlantUML 產生架構圖 |

@@ -1,7 +1,7 @@
 ---
 name: writing-spec
 description: |
-  Use when design.md, tasks.md, and any UML/Figma artifacts exist in openspec/changes/{change-id}/ - produces OpenSpec-compliant proposal.md and one or more specs/{capability}/spec.md using ADDED/MODIFIED/REMOVED Requirements with WHEN/THEN Scenarios; mandates that every diagram and design artifact be referenced via '> See: ...' from at least one requirement; validates with `openspec validate --strict`.
+  Use when design.md, tasks.md, and any UML/Figma artifacts exist in openspec/changes/{change-id}/ - produces OpenSpec-compliant proposal.md and one or more specs/{capability}/spec.md using ADDED/MODIFIED/REMOVED Requirements with WHEN/THEN Scenarios; mandates that every diagram and design artifact be referenced from at least one requirement; validates with `openspec validate --strict`.
 ---
 
 # Writing OpenSpec Change Proposals
@@ -11,7 +11,9 @@ Translate all gathered artifacts into a committed, validated OpenSpec proposal a
 <HARD-GATE>
 Do NOT invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development` until the user has explicitly approved proposal.md and all specs.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords, ADDED/MODIFIED/REMOVED/WHEN/THEN/AND/SHALL) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+
+**Document language:** Write proposal.md and spec.md body prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language. OpenSpec structural keywords (ADDED, MODIFIED, REMOVED, WHEN, THEN, AND, SHALL) always remain in English.
 
 **Artifact reference enforcement:**
 1. Every existing diagram in `openspec/changes/{change-id}/diagrams/*.puml` AND every existing design in `openspec/changes/{change-id}/designs/figma.md` MUST be referenced via `> See: ...` from at least one requirement Scenario.
@@ -23,7 +25,12 @@ Do NOT invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:
 
 You MUST complete each item in order:
 
-1. **Detect language** — reuse from design.md frontmatter or the user's first message. Lock for the conversation.
+1. **Detect language** — reuse the conversation language from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls the prose language for proposal.md and spec.md body content. Lock both for the conversation.
+1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
+   - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 2.
+   - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
+     - On "resume" invoke `spec-driven-dev:resume`.
+     - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
 2. **Read ALL artifacts** in `openspec/changes/{change-id}/`: `design.md`, `tasks.md`, `diagrams/*.puml` (if any), `designs/figma.md` (if it exists). Do not skip any file present.
 3. **OpenSpec CLI precheck** — run `command -v openspec` and `test -d openspec/`. If either check fails, abort with:
    > Install: `npm i -g @fission-ai/openspec`
@@ -73,6 +80,8 @@ digraph writing_spec {
     rankdir=TB;
 
     "Detect language" [shape=box];
+    "In-flight change precheck" [shape=diamond];
+    "Invoke spec-driven-dev:resume" [shape=doublecircle];
     "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)" [shape=box];
     "OpenSpec CLI precheck" [shape=box];
     "Identify capabilities" [shape=box];
@@ -88,7 +97,9 @@ digraph writing_spec {
     "Invoke spec-driven-dev:subagent-driven-development" [shape=doublecircle];
     "Invoke spec-driven-dev:test-driven-development" [shape=doublecircle];
 
-    "Detect language" -> "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)";
+    "Detect language" -> "In-flight change precheck";
+    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="other in-flight found + resume"];
+    "In-flight change precheck" -> "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)" [label="no other in-flight | 新 (warn + proceed)"];
     "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)" -> "OpenSpec CLI precheck";
     "OpenSpec CLI precheck" -> "Identify capabilities";
     "Identify capabilities" -> "Write proposal.md";

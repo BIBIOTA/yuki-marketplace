@@ -14,9 +14,11 @@
     "figma",
     "brainstorming",
     "planning",
-    "debugging"
+    "debugging",
+    "spec-update"
   ],
   "skills": [
+    "./skills/resume",
     "./skills/brainstorming",
     "./skills/writing-plans",
     "./skills/writing-uml",
@@ -25,6 +27,7 @@
     "./skills/system-debugging",
     "./skills/subagent-driven-development",
     "./skills/test-driven-development",
+    "./skills/updating-spec",
     "./skills/verification-before-completion"
   ]
 }

@@ -14,9 +14,22 @@
     "figma",
     "brainstorming",
     "planning",
-    "debugging"
+    "debugging",
+    "spec-update"
   ],
-  "skills": "./skills/",
+  "skills": [
+    "./skills/resume",
+    "./skills/brainstorming",
+    "./skills/writing-plans",
+    "./skills/writing-uml",
+    "./skills/writing-figma",
+    "./skills/writing-spec",
+    "./skills/system-debugging",
+    "./skills/subagent-driven-development",
+    "./skills/test-driven-development",
+    "./skills/updating-spec",
+    "./skills/verification-before-completion"
+  ],
   "interface": {
     "displayName": "Spec Driven Dev",
     "shortDescription": "OpenSpec workflow from brainstorming through verification",
@@ -31,6 +44,7 @@
     "defaultPrompt": [
       "Start a spec-driven change",
       "Turn an approved design into tasks",
+      "Update specs after a scope change",
       "Verify an OpenSpec implementation"
     ],
     "screenshots": []
