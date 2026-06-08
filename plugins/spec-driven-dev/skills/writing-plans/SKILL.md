@@ -11,13 +11,15 @@ Decompose an approved design into a concrete, reviewable task checklist, then ha
 Do NOT invoke `spec-driven-dev:writing-uml`, `spec-driven-dev:writing-figma`, or `spec-driven-dev:writing-spec` until the user has approved tasks.md.
 
 **Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English. Reuse the language detected in design.md or the first user message.
+
+**Document language:** Write tasks.md body prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — reuse the language from design.md frontmatter, or fall back to the user's first message language. Lock for the conversation.
+1. **Detect language** — reuse the conversation language from design.md frontmatter (or fall back to the user's first message language). Also read `doc_language` from design.md frontmatter; this controls what language to write tasks.md body prose in. Lock both for the conversation.
 2. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 3 — no warning, no prompt.
    - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 3 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".

@@ -10,14 +10,16 @@ Translate selected diagram types into committed PlantUML sources, then hand off 
 <HARD-GATE>
 Do NOT invoke `spec-driven-dev:writing-figma` or `spec-driven-dev:writing-spec` until all selected diagrams are user-approved and committed.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, PlantUML source) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, PlantUML syntax keywords) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+
+**Document language:** Write PlantUML label text and design.md update prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — reuse from design.md frontmatter or the user's first message. Lock for the conversation.
+1. **Detect language** — reuse the conversation language from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls diagram label text and prose in design.md updates. Lock both for the conversation.
 2. **Read** `openspec/changes/{change-id}/design.md` and `openspec/changes/{change-id}/tasks.md` completely. Note which diagram types tasks.md marks as required.
 3. **Present the diagram type menu** as a multi-select prompt. For each type, describe what it represents and list 2-3 typical use cases. Use the table in the [Diagram Type Menu](#diagram-type-menu) section below. Full PlantUML syntax examples are in `./diagram-types.md`.
 4. **For each selected diagram type**, in order:

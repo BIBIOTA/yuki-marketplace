@@ -12,13 +12,15 @@ Orchestrate the official figma:* skills to produce committed design assets, then
 User must approve `openspec/changes/{change-id}/designs/figma.md` before invoking `spec-driven-dev:writing-spec`.
 
 **Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, Figma node IDs) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+
+**Document language:** Write figma.md body prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — reuse from design.md frontmatter or the user's first message. Lock for the conversation.
+1. **Detect language** — reuse the conversation language from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls figma.md body prose language. Lock both for the conversation.
 2. **Read** `openspec/changes/{change-id}/design.md` and `openspec/changes/{change-id}/tasks.md` completely.
 3. **Frontend project precheck** — check for any of these files or directories in the project root. If NONE are present, prompt the user to confirm Figma is still needed before continuing:
    - `package.json`
