@@ -87,6 +87,7 @@ Artifacts 統一存放在 `openspec/changes/{change-id}/`。
 | `writing-uml` | 用 PlantUML 產生架構圖 |
 | `writing-figma` | 將設計同步到 Figma |
 | `writing-spec` | 產生 OpenSpec 格式規格文件 |
+| `updating-spec` | 實作或驗證後需求範圍變更時，更新 OpenSpec artifacts 並路由回實作或驗證 |
 | `system-debugging` | 針對 bug 先建立觀測方法、重現步驟與根因證據 |
 | `subagent-driven-development` | 用平行 subagent 執行實作任務 |
 | `test-driven-development` | Red-Green-Refactor TDD 循環 |
