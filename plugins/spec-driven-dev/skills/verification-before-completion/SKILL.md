@@ -8,7 +8,7 @@ description: Use when implementation is complete and you need to verify before c
 <HARD-GATE>
 **Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, commands) stay in English.
 
-1. ANY stage fail → integral fail. Route back to the originating skill: code failures → `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`; spec failures → `spec-driven-dev:writing-spec`; diagram failures → `spec-driven-dev:writing-uml`; design failures → `spec-driven-dev:writing-figma`.
+1. ANY stage fail → integral fail. Route back to the originating skill: code failures → `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`; spec failures → `spec-driven-dev:writing-spec`; progress-log failures (Stage 2 `progress.md` gate) → ask the user "SDD or TDD?" then route to the chosen implementation skill; diagram failures → `spec-driven-dev:writing-uml`; design failures → `spec-driven-dev:writing-figma`.
 2. `verification-report.md` MUST be written to `openspec/changes/{change-id}/verification-report.md`. If the file is missing at skill exit → skill is not complete.
 3. Suggest `openspec archive {change-id}` ONLY on full pass (all stages PASS or n/a).
 </HARD-GATE>
@@ -46,13 +46,18 @@ Complete all stages in order. Do not skip stages unless the conditional is satis
 
    > **Note**: `{change-id}` is a placeholder. Substitute the actual change ID before running.
 
-6. **tasks.md completeness** — read `openspec/changes/{change-id}/tasks.md`. Every item must either be checked off (`- [x]`) or carry an explicit `deferred:` annotation with a reason. Any unchecked item without `deferred:` → Stage 2 FAIL.
+6. **progress.md gate** — read `openspec/changes/{change-id}/progress.md`.
+   - If the file does not exist → Stage 2 FAIL with reason `progress.md missing`. Ask the user "SDD or TDD?" and re-invoke the chosen implementation skill (`spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`), mirroring the Stage 1 failure routing pattern.
+   - If the file exists but its last `## Session N` block has no `- Next action:` line, or that line is empty → Stage 2 FAIL with reason `progress.md last entry has empty Next action`. Same routing as above.
+   - Otherwise record `Progress log: PASS` and proceed to the next check.
+
+7. **tasks.md completeness** — read `openspec/changes/{change-id}/tasks.md`. Every item must either be checked off (`- [x]`) or carry an explicit `deferred:` annotation with a reason. Any unchecked item without `deferred:` → Stage 2 FAIL.
 
 ---
 
 ### Stage 3 — Diagram verification (conditional: skip if no `openspec/changes/{change-id}/diagrams/` directory)
 
-7. **Per-diagram check** — for each `.puml` file found in `openspec/changes/{change-id}/diagrams/`, determine diagram type from the PlantUML directive and run the matching check:
+8. **Per-diagram check** — for each `.puml` file found in `openspec/changes/{change-id}/diagrams/`, determine diagram type from the PlantUML directive and run the matching check:
 
    - **Sequence diagram** (`@startuml` with `->` arrows): extract message order (caller → callee, method name). Grep `src/` for function/method names in the expected call sequence order. PASS if all names found in order; FAIL if any missing; MANUAL-REVIEW if order cannot be mechanically verified.
    - **State diagram** (`state` keyword): extract states and transitions (`state A --> B`). Compare to enum values and switch/if-else state-machine logic in `src/`. PASS / FAIL / MANUAL-REVIEW.
@@ -66,7 +71,7 @@ Complete all stages in order. Do not skip stages unless the conditional is satis
 
 ### Stage 4 — Design verification (conditional: skip if no `openspec/changes/{change-id}/designs/figma.md`)
 
-8. **Per-state visual check** — read `openspec/changes/{change-id}/designs/figma.md`. For each named state (happy path, empty state, error state, loading state, etc.):
+9. **Per-state visual check** — read `openspec/changes/{change-id}/designs/figma.md`. For each named state (happy path, empty state, error state, loading state, etc.):
    - Launch dev server or Storybook if not already running.
    - Navigate to the implementation of that state.
    - Capture a screenshot to a temp directory.
@@ -74,21 +79,22 @@ Complete all stages in order. Do not skip stages unless the conditional is satis
    - List diffs: visual layout, spacing, color tokens, copy/text, component composition.
    - Mark PASS if diffs are negligible; FAIL if any structural or copy mismatch exists.
 
-9. **Shared component reuse check** — for each component in `figma.md` annotated `(existing)`, grep the codebase for the actual import or usage of that component. Confirm the existing component is reused, not duplicated. Any duplication → Stage 4 FAIL.
+10. **Shared component reuse check** — for each component in `figma.md` annotated `(existing)`, grep the codebase for the actual import or usage of that component. Confirm the existing component is reused, not duplicated. Any duplication → Stage 4 FAIL.
 
 ---
 
 ### Stage 5 — Aggregation
 
-10. **Write `verification-report.md`** — write the report (using the template below) to `openspec/changes/{change-id}/verification-report.md`. This file MUST exist before the skill exits.
+11. **Write `verification-report.md`** — write the report (using the template below) to `openspec/changes/{change-id}/verification-report.md`. This file MUST exist before the skill exits.
 
-11. **If ALL stages pass (or n/a)** — print to the user:
+12. **If ALL stages pass (or n/a)** — print to the user:
 
     > "All verification stages passed. Suggested next step: `openspec archive {change-id}`."
 
-12. **If ANY stage fails** — list each failed item with its stage number and route back:
+13. **If ANY stage fails** — list each failed item with its stage number and route back:
     - Code fail (Stage 1) → re-invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`
-    - Spec fail (Stage 2) → re-invoke `spec-driven-dev:writing-spec`
+    - Spec fail (Stage 2, `openspec validate` or `tasks.md completeness`) → re-invoke `spec-driven-dev:writing-spec`
+    - Progress-log fail (Stage 2, `progress.md gate`) → ask the user "SDD or TDD?" and re-invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development` accordingly, mirroring Stage 1 routing
     - Diagram fail (Stage 3) → re-invoke `spec-driven-dev:writing-uml`
     - Design fail (Stage 4) → re-invoke `spec-driven-dev:writing-figma`
 
@@ -104,9 +110,11 @@ digraph verification_before_completion {
     "Stage 1: Lint + Tests\n+ Scenario coverage\n+ Smoke (frontend)" [shape=box];
     "Stage 1 pass?" [shape=diamond];
     "Route back to\nspec-driven-dev:subagent-driven-development\nor spec-driven-dev:test-driven-development" [shape=box, style=filled, fillcolor="#ffcccc"];
-    "Stage 2: openspec validate --strict\n+ tasks.md completeness" [shape=box];
+    "Stage 2: openspec validate --strict\n+ progress.md gate\n+ tasks.md completeness" [shape=box];
     "Stage 2 pass?" [shape=diamond];
+    "Stage 2 failure type?" [shape=diamond];
     "Route back to\nspec-driven-dev:writing-spec" [shape=box, style=filled, fillcolor="#ffcccc"];
+    "Ask user: SDD or TDD?\nRoute back to chosen implementation skill" [shape=box, style=filled, fillcolor="#ffcccc"];
     "diagrams/ exists?" [shape=diamond];
     "Stage 3: Diagram contract\nconformance" [shape=box];
     "Stage 3 pass?" [shape=diamond];
@@ -122,11 +130,13 @@ digraph verification_before_completion {
 
     "Start verification" -> "Stage 1: Lint + Tests\n+ Scenario coverage\n+ Smoke (frontend)";
     "Stage 1: Lint + Tests\n+ Scenario coverage\n+ Smoke (frontend)" -> "Stage 1 pass?";
-    "Stage 1 pass?" -> "Stage 2: openspec validate --strict\n+ tasks.md completeness" [label="yes"];
+    "Stage 1 pass?" -> "Stage 2: openspec validate --strict\n+ progress.md gate\n+ tasks.md completeness" [label="yes"];
     "Stage 1 pass?" -> "Route back to\nspec-driven-dev:subagent-driven-development\nor spec-driven-dev:test-driven-development" [label="no"];
-    "Stage 2: openspec validate --strict\n+ tasks.md completeness" -> "Stage 2 pass?";
+    "Stage 2: openspec validate --strict\n+ progress.md gate\n+ tasks.md completeness" -> "Stage 2 pass?";
     "Stage 2 pass?" -> "diagrams/ exists?" [label="yes"];
-    "Stage 2 pass?" -> "Route back to\nspec-driven-dev:writing-spec" [label="no"];
+    "Stage 2 pass?" -> "Stage 2 failure type?" [label="no"];
+    "Stage 2 failure type?" -> "Route back to\nspec-driven-dev:writing-spec" [label="spec / tasks"];
+    "Stage 2 failure type?" -> "Ask user: SDD or TDD?\nRoute back to chosen implementation skill" [label="progress.md"];
     "diagrams/ exists?" -> "Stage 3: Diagram contract\nconformance" [label="yes"];
     "diagrams/ exists?" -> "designs/figma.md exists?" [label="no (skip)"];
     "Stage 3: Diagram contract\nconformance" -> "Stage 3 pass?";
@@ -156,6 +166,7 @@ Verifier: {model name or claude-code session id}
 ## Summary
 - Code: {PASS | FAIL}
 - Spec: {PASS | FAIL}
+- Progress log: {PASS | FAIL}
 - Diagrams: {PASS | FAIL | n/a}
 - Designs: {PASS | FAIL | n/a}
 
@@ -190,4 +201,4 @@ Before writing the report, confirm:
 Verification is the **terminal skill** in the spec-driven-dev chain. There is NO next skill to invoke after this one.
 
 - On full pass: suggest `openspec archive {change-id}` to the user. The user runs the command themselves; this skill does NOT run it.
-- On any failure: route back to the originating skill as specified in Stage 5, item 12. Do not suggest `openspec archive` until a subsequent verification run achieves full pass.
+- On any failure: route back to the originating skill as specified in Stage 5, item 13. Do not suggest `openspec archive` until a subsequent verification run achieves full pass.
