@@ -18,21 +18,25 @@ Do NOT invoke `spec-driven-dev:writing-uml`, `spec-driven-dev:writing-figma`, or
 You MUST create a task for each of these items and complete them in order:
 
 1. **Detect language** — reuse the language from design.md frontmatter, or fall back to the user's first message language. Lock for the conversation.
-1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight). If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？". On "resume" invoke `spec-driven-dev:resume`. On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
-2. **Read `openspec/changes/{change-id}/design.md`** completely.
-3. **Validate change-id and directory exist.** If not, escalate: "design.md not found — return to spec-driven-dev:brainstorming."
-4. **Decompose into bite-sized tasks.** Each task entry must include:
+2. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
+   - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 3 — no warning, no prompt.
+   - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 3 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
+     - On "resume" invoke `spec-driven-dev:resume`.
+     - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 3.
+3. **Read `openspec/changes/{change-id}/design.md`** completely.
+4. **Validate change-id and directory exist.** If not, escalate: "design.md not found — return to spec-driven-dev:brainstorming."
+5. **Decompose into bite-sized tasks.** Each task entry must include:
    - Imperative title (e.g., "Add /login POST endpoint")
    - Acceptance criteria using `WHEN ... THEN ...` (and optionally `AND`) format
    - Dependencies: list any prerequisite task numbers
    - Independence estimate (note as `independent`, `serial`, or `parallel-safe` — used by downstream SDD/TDD selection)
-5. **Confirm optional artifacts** with this exact multi-select prompt (verbatim, but adapt language):
+6. **Confirm optional artifacts** with this exact multi-select prompt (verbatim, but adapt language):
    > Does this change require any of the following artifacts before implementation? (multi-select)
    > - [ ] PlantUML diagrams (spec-driven-dev:writing-uml) — fits: complex flows, state machines, cross-component interactions, ER schemas
    > - [ ] Figma designs (spec-driven-dev:writing-figma) — fits: frontend UI, interactive prototypes, A/B version comparison
-6. **Write tasks.md** to `openspec/changes/{change-id}/tasks.md` using the template below. Include a `## Optional artifacts` section marking the user's selection.
-7. **Spec self-review** — four checks: placeholder / consistency / scope / ambiguity. Fix inline.
-8. **User review gate** — say verbatim:
+7. **Write tasks.md** to `openspec/changes/{change-id}/tasks.md` using the template below. Include a `## Optional artifacts` section marking the user's selection.
+8. **Spec self-review** — four checks: placeholder / consistency / scope / ambiguity. Fix inline.
+9. **User review gate** — say verbatim:
    > "tasks.md written to `{path}`. Please review and tell me whether to proceed or make changes."
 
    Then `git add` and `git commit` the file:
@@ -40,12 +44,12 @@ You MUST create a task for each of these items and complete them in order:
    git add openspec/changes/{change-id}/tasks.md
    git commit -m "docs: add tasks for {change-id}"
    ```
-9. **Transition logic:**
-   ```
-   if writing-uml selected → invoke spec-driven-dev:writing-uml
-   elif writing-figma selected → invoke spec-driven-dev:writing-figma
-   else → invoke spec-driven-dev:writing-spec
-   ```
+10. **Transition logic:**
+    ```
+    if writing-uml selected → invoke spec-driven-dev:writing-uml
+    elif writing-figma selected → invoke spec-driven-dev:writing-figma
+    else → invoke spec-driven-dev:writing-spec
+    ```
 
 ## Process Flow
 
@@ -68,8 +72,9 @@ digraph writing_plans {
     "Invoke spec-driven-dev:writing-spec" [shape=doublecircle];
 
     "Detect language" -> "In-flight change precheck";
-    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="resume"];
-    "In-flight change precheck" -> "Read design.md" [label="新 (warn + proceed) / none"];
+    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="in-flight found + resume"];
+    "In-flight change precheck" -> "Read design.md" [label="in-flight found + 新 (warn + proceed)"];
+    "In-flight change precheck" -> "Read design.md" [label="no in-flight (proceed)"];
     "Read design.md" -> "Validate change-id directory exists";
     "Validate change-id directory exists" -> "Decompose into tasks";
     "Decompose into tasks" -> "Confirm optional artifacts (UML/Figma)";
@@ -114,8 +119,8 @@ Every task entry MUST carry a `- status: {state}` sub-bullet. New tasks are writ
 Allowed states:
 
 - `not_started` — task has not been picked up yet (initial state for every new task)
-- `in_progress` — actively being implemented in the current session (at most ONE per change at any time)
-- `passing` — implementation complete, tests / reviews green, terminal success state
+- `in_progress` — actively being implemented in the current session
+- `passing` — implementation complete, tests / reviews green, terminal
 - `blocked` — implementer paused (BLOCKED / NEEDS_CONTEXT or TDD step cannot proceed); resumable later
 
 Allowed transitions:
