@@ -22,7 +22,7 @@ You MUST create a task for each of these items and complete them in order:
 
 1. **Detect language** — read `doc_language` from `openspec/changes/{change-id}/design.md` frontmatter; fall back to user's conversation language.
 2. **Confirm change-id** — scan `openspec/changes/*/` for in-flight changes (has `design.md`, no `verification-report.md`). If exactly one found, use it. If multiple found, ask the user to choose. If none found, ask the user to specify.
-2.5. **Requirements Lens** — Distil a requirements-perspective summary from design.md before generating the PRD (see Writing Rules for details).
+2.5. **Requirements Lens** — distil a requirements-perspective summary from design.md before generating the PRD.
 3. **Ask clarifying questions** — 3–5 questions with lettered options (A/B/C/D); user may reply `1A 2C 3B`. Focus on: Problem, Core Functionality, Scope, Success Criteria. Skip questions already answered in design.md.
 4. **Generate PRD** — produce the full PRD using the structure below; write to `openspec/changes/{change-id}/prd.md`.
 5. **User review gate** — ask the user whether any section needs changes. Wait for confirmation before continuing.
