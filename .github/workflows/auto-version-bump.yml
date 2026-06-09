@@ -15,20 +15,26 @@ jobs:
 
       - name: Bump patch version in plugin manifests
         run: |
-          CLAUDE_FILE="plugins/yuki-toolkit/.claude-plugin/plugin.json"
-          CODEX_FILE="plugins/yuki-toolkit/.codex-plugin/plugin.json"
-          CURRENT=$(jq -r '.version' "$CLAUDE_FILE")
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
-          NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-          jq --arg v "$NEW_VERSION" '.version = $v' "$CLAUDE_FILE" > tmp.json && mv tmp.json "$CLAUDE_FILE"
-          jq --arg v "$NEW_VERSION" '.version = $v' "$CODEX_FILE" > tmp.json && mv tmp.json "$CODEX_FILE"
-          echo "Bumped version: $CURRENT -> $NEW_VERSION"
+          bump_plugin() {
+            local CLAUDE_FILE="$1"
+            local CODEX_FILE="$2"
+            local CURRENT=$(jq -r '.version' "$CLAUDE_FILE")
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+            local NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+            jq --arg v "$NEW_VERSION" '.version = $v' "$CLAUDE_FILE" > tmp.json && mv tmp.json "$CLAUDE_FILE"
+            jq --arg v "$NEW_VERSION" '.version = $v' "$CODEX_FILE" > tmp.json && mv tmp.json "$CODEX_FILE"
+            echo "Bumped $CLAUDE_FILE: $CURRENT -> $NEW_VERSION"
+          }
+
+          bump_plugin "plugins/yuki-toolkit/.claude-plugin/plugin.json" "plugins/yuki-toolkit/.codex-plugin/plugin.json"
+          bump_plugin "plugins/spec-driven-dev/.claude-plugin/plugin.json" "plugins/spec-driven-dev/.codex-plugin/plugin.json"
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add plugins/yuki-toolkit/.claude-plugin/plugin.json plugins/yuki-toolkit/.codex-plugin/plugin.json
+          git add plugins/spec-driven-dev/.claude-plugin/plugin.json plugins/spec-driven-dev/.codex-plugin/plugin.json
           git diff --cached --quiet && echo "No version change needed" && exit 0
-          git commit -m "chore: bump plugin version to $(jq -r '.version' plugins/yuki-toolkit/.claude-plugin/plugin.json)"
+          git commit -m "chore: bump plugin versions"
           git push
