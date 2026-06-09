@@ -23,6 +23,19 @@ You MUST create a task for each of these items and complete them in order:
 1. **Detect language** — read `doc_language` from `openspec/changes/{change-id}/design.md` frontmatter; fall back to user's conversation language.
 2. **Confirm change-id** — scan `openspec/changes/*/` for in-flight changes (has `design.md`, no `verification-report.md`). If exactly one found, use it. If multiple found, ask the user to choose. If none found, ask the user to specify.
 2.5. **Requirements Lens** — distil a requirements-perspective summary from design.md before generating the PRD.
+
+   Produce an internal summary covering these three items:
+
+   - **識別真實 Actor** — 只保留人類角色（例如：行銷人員、系統管理員）。移除所有「as a system」或以系統元件為主詞的描述。
+     > 轉換範例：「Kafka consumer 接收 domain.events」→ Actor 列表只列「行銷人員」，移除 Kafka consumer。
+
+   - **將技術描述轉為能力陳述** — 把實作語言改寫為可觀察的系統能力語言。
+     > 轉換範例：「消費 domain.events via Kafka」→「系統能即時回應使用者行為事件」
+
+   - **對應業務成果** — 說明每個功能領域交付什麼業務價值，而非技術實作細節。
+     > 轉換範例：「實作 Redis cache layer 降低 DB 查詢」→「使用者體驗流暢的即時反饋，不感受到等待延遲」
+
+   > **注意：此摘要為內部工作產物，不寫入 prd.md。僅作為後續 PRD 各節的生成輸入。**
 3. **Ask clarifying questions** — 3–5 questions with lettered options (A/B/C/D); user may reply `1A 2C 3B`. Focus on: Problem, Core Functionality, Scope, Success Criteria. Skip questions already answered in design.md.
 4. **Generate PRD** — produce the full PRD using the structure below; write to `openspec/changes/{change-id}/prd.md`.
 5. **User review gate** — ask the user whether any section needs changes. Wait for confirmation before continuing.
