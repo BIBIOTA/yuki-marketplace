@@ -29,7 +29,7 @@ You MUST complete each item in order:
 1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 2.
    - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
-     - On "resume" invoke `spec-driven-dev:resume`.
+     - On "resume" invoke `spec-driven-dev:resume-change`.
      - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
 2. **Read ALL artifacts** in `openspec/changes/{change-id}/`: `design.md`, `tasks.md`, `diagrams/*.puml` (if any), `designs/figma.md` (if it exists). Do not skip any file present.
 3. **OpenSpec CLI precheck** — run `command -v openspec` and `test -d openspec/`. If either check fails, abort with:
@@ -81,7 +81,7 @@ digraph writing_spec {
 
     "Detect language" [shape=box];
     "In-flight change precheck" [shape=diamond];
-    "Invoke spec-driven-dev:resume" [shape=doublecircle];
+    "Invoke spec-driven-dev:resume-change" [shape=doublecircle];
     "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)" [shape=box];
     "OpenSpec CLI precheck" [shape=box];
     "Identify capabilities" [shape=box];
@@ -98,7 +98,7 @@ digraph writing_spec {
     "Invoke spec-driven-dev:test-driven-development" [shape=doublecircle];
 
     "Detect language" -> "In-flight change precheck";
-    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="other in-flight found + resume"];
+    "In-flight change precheck" -> "Invoke spec-driven-dev:resume-change" [label="other in-flight found + resume"];
     "In-flight change precheck" -> "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)" [label="no other in-flight | 新 (warn + proceed)"];
     "Read ALL artifacts\n(design.md, tasks.md, diagrams, figma.md)" -> "OpenSpec CLI precheck";
     "OpenSpec CLI precheck" -> "Identify capabilities";

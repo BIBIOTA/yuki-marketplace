@@ -23,7 +23,7 @@ You MUST create a task for each of these items and complete them in order:
 2. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 3 — no warning, no prompt.
    - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 3 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
-     - On "resume" invoke `spec-driven-dev:resume`.
+     - On "resume" invoke `spec-driven-dev:resume-change`.
      - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 3.
 3. **Read `openspec/changes/{change-id}/design.md`** completely.
 4. **Validate change-id and directory exist.** If not, escalate: "design.md not found — return to spec-driven-dev:brainstorming."
@@ -61,7 +61,7 @@ digraph writing_plans {
 
     "Detect language" [shape=box];
     "In-flight change precheck" [shape=diamond];
-    "Invoke spec-driven-dev:resume" [shape=doublecircle];
+    "Invoke spec-driven-dev:resume-change" [shape=doublecircle];
     "Read design.md" [shape=box];
     "Validate change-id directory exists" [shape=box];
     "Decompose into tasks" [shape=box];
@@ -74,7 +74,7 @@ digraph writing_plans {
     "Invoke spec-driven-dev:writing-spec" [shape=doublecircle];
 
     "Detect language" -> "In-flight change precheck";
-    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="in-flight found + resume"];
+    "In-flight change precheck" -> "Invoke spec-driven-dev:resume-change" [label="in-flight found + resume"];
     "In-flight change precheck" -> "Read design.md" [label="in-flight found + 新 (warn + proceed)"];
     "In-flight change precheck" -> "Read design.md" [label="no in-flight (proceed)"];
     "Read design.md" -> "Validate change-id directory exists";

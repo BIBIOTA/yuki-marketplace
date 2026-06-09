@@ -23,7 +23,7 @@ You MUST complete each item in order:
 3. **In-flight precheck + single-in-progress assertion** — before entering any Red phase:
    - Scan tasks.md for `- status: in_progress` sub-bullets. If **more than one** task has `status: in_progress`, abort and report the violation: "tasks.md has multiple `in_progress` tasks — single-in-progress invariant violated. Resolve manually (flip stale entries to `blocked` or `not_started`) before re-invoking TDD." Do NOT auto-fix.
    - If **exactly one** task has `status: in_progress`, prompt the user verbatim: "偵測到 in-flight task `{task-id}`，要 resume 還是改跑新 task？".
-     - On "resume" — invoke `spec-driven-dev:resume` and stop this run.
+     - On "resume" — invoke `spec-driven-dev:resume-change` and stop this run.
      - On "新 task" — emit a warning that the in-flight task remains `in_progress` in tasks.md (preserved, not erased) and ask the user which task id to start instead, then proceed to step 4 with that task as the TDD target.
    - If **no** task has `status: in_progress`, proceed silently to step 4.
 4. **For each task in tasks.md, follow the per-task TDD loop** (described in the next section).
@@ -62,7 +62,7 @@ digraph test_driven_development {
     "Read change artifacts\n(tasks.md, specs/, diagrams/, designs/)" [shape=box];
     "In-flight precheck\n(single-in-progress invariant)" [shape=diamond];
     "Abort: multiple in_progress\n(user resolves manually)" [shape=doublecircle];
-    "Invoke spec-driven-dev:resume" [shape=doublecircle];
+    "Invoke spec-driven-dev:resume-change" [shape=doublecircle];
     "Flip task status to in_progress\n+ append progress.md Session\n(Transition: not_started → in_progress)" [shape=box];
     "Identify spec coverage\n(### Requirement + #### Scenario)" [shape=box];
     "Red: write failing tests\n(names match Scenario names)" [shape=box, style=filled, fillcolor="#ffcccc"];
@@ -87,7 +87,7 @@ digraph test_driven_development {
     "Detect language" -> "Read change artifacts\n(tasks.md, specs/, diagrams/, designs/)";
     "Read change artifacts\n(tasks.md, specs/, diagrams/, designs/)" -> "In-flight precheck\n(single-in-progress invariant)";
     "In-flight precheck\n(single-in-progress invariant)" -> "Abort: multiple in_progress\n(user resolves manually)" [label=">1 in_progress"];
-    "In-flight precheck\n(single-in-progress invariant)" -> "Invoke spec-driven-dev:resume" [label="1 in_progress + resume"];
+    "In-flight precheck\n(single-in-progress invariant)" -> "Invoke spec-driven-dev:resume-change" [label="1 in_progress + resume"];
     "In-flight precheck\n(single-in-progress invariant)" -> "Flip task status to in_progress\n+ append progress.md Session\n(Transition: not_started → in_progress)" [label="0 in_progress | new task selected"];
     "Flip task status to in_progress\n+ append progress.md Session\n(Transition: not_started → in_progress)" -> "Identify spec coverage\n(### Requirement + #### Scenario)";
     "Identify spec coverage\n(### Requirement + #### Scenario)" -> "Red: write failing tests\n(names match Scenario names)";

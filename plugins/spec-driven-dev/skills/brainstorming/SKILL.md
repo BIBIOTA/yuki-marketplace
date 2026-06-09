@@ -27,7 +27,7 @@ You MUST create a task for each of these items and complete them in order:
 1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found, proceed directly to step 2.
    - If any in-flight change is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
-     - On "resume" invoke `spec-driven-dev:resume`.
+     - On "resume" invoke `spec-driven-dev:resume-change`.
      - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
 2. **Explore project context** — run `ls`, `git log -10`, read README and CLAUDE.md; detect if this is a frontend project via package.json / next.config / vite.config
 3. **Scope check** — if the request includes multiple independent subsystems, help decompose first; brainstorm only the first sub-project through this session
@@ -75,7 +75,7 @@ digraph brainstorming {
     "User message received" [shape=box];
     "Detect language" [shape=box];
     "In-flight change precheck" [shape=diamond];
-    "Invoke spec-driven-dev:resume" [shape=doublecircle];
+    "Invoke spec-driven-dev:resume-change" [shape=doublecircle];
     "Explore project context" [shape=box];
     "Scope check\n(decompose if multi-subsystem)" [shape=box];
     "Decide change-id" [shape=box];
@@ -93,7 +93,7 @@ digraph brainstorming {
 
     "User message received" -> "Detect language";
     "Detect language" -> "In-flight change precheck";
-    "In-flight change precheck" -> "Invoke spec-driven-dev:resume" [label="in-flight found + resume"];
+    "In-flight change precheck" -> "Invoke spec-driven-dev:resume-change" [label="in-flight found + resume"];
     "In-flight change precheck" -> "Explore project context" [label="no in-flight | 新 (warn + proceed)"];
     "Explore project context" -> "Scope check\n(decompose if multi-subsystem)";
     "Scope check\n(decompose if multi-subsystem)" -> "Decide change-id";

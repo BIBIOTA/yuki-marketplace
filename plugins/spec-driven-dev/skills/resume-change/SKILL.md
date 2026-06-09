@@ -1,5 +1,5 @@
 ---
-name: resume
+name: resume-change
 description: Use when manually resuming a spec-driven-dev change, or when an upstream skill precheck detects an in-flight change - scans openspec/changes/*/, reads progress.md when present, enforces the single-in-progress invariant, and routes back to the correct spec-driven-dev skill without guessing.
 ---
 
