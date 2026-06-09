@@ -12,7 +12,7 @@ Do NOT invoke any implementation skill, write code, or scaffold files until desi
 
 **Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English.
 
-**Document language:** The body prose of design.md (and all downstream artifacts) MUST be written in the `doc_language` the user selects in step 5. This is separate from the conversation reply language.
+**Document language:** The body prose of design.md (and all downstream artifacts) MUST be written in the `doc_language` the user selects in step 5. If step 5 is skipped or the user does not answer, `doc_language` MUST default to the detected conversation language — NEVER default to English unless the conversation is in English. This is separate from the conversation reply language.
 </HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
@@ -64,7 +64,12 @@ You MUST create a task for each of these items and complete them in order:
     git add openspec/changes/{change-id}/design.md
     git commit -m "docs: add design for {change-id}"
     ```
-14. **Transition** — after user approves, invoke the `spec-driven-dev:writing-plans` skill (NOT the superpowers version)
+14. **Transition** — after user approves, ask:
+    > "設計已完成。要先建立 PRD（`spec-driven-dev:prd`）再進入實作計畫，還是直接跳到 writing-plans？"
+    > 1. 建立 PRD — invoke `spec-driven-dev:prd`
+    > 2. 直接跳到 writing-plans — invoke `spec-driven-dev:writing-plans`
+
+    Adapt the prompt language to the user's conversation language. Invoke only the `spec-driven-dev:*` version of the chosen skill (NOT the superpowers versions).
 
 ## Process Flow
 
@@ -109,11 +114,13 @@ digraph brainstorming {
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design.md\n(with doc_language frontmatter)" [label="changes requested"];
     "User reviews spec?" -> "Commit design.md" [label="approved"];
-    "Commit design.md" -> "Invoke writing-plans skill";
+    "Commit design.md" -> "Prompt: PRD or writing-plans?";
+    "Prompt: PRD or writing-plans?" -> "Invoke spec-driven-dev:prd" [label="PRD"];
+    "Prompt: PRD or writing-plans?" -> "Invoke writing-plans skill" [label="skip PRD"];
 }
 ```
 
-The terminal state is invoking `spec-driven-dev:writing-plans`. Do NOT invoke any other implementation skill from this skill.
+The terminal state is invoking either `spec-driven-dev:prd` (optional) or `spec-driven-dev:writing-plans`. Do NOT invoke any other implementation skill from this skill.
 
 ## The Process
 
@@ -173,6 +180,9 @@ After writing design.md, look at it with fresh eyes and apply these four checks.
 
 ## Transition Handoff
 
-After the user approves the spec, invoke the `spec-driven-dev:writing-plans` skill via Skill tool. Do NOT invoke `superpowers:writing-plans` — they are different skills with different downstream chains.
+After the user approves the spec, ask whether to build a PRD first or proceed directly to writing-plans:
 
-The writing-plans skill reads `openspec/changes/{change-id}/design.md` and produces `openspec/changes/{change-id}/tasks.md`, including decisions on whether to invoke writing-uml, writing-figma, or proceed directly to writing-spec.
+- **PRD selected** → invoke `spec-driven-dev:prd` — produces `prd.md` then chains to writing-plans / writing-figma / writing-uml
+- **Skip PRD** → invoke `spec-driven-dev:writing-plans` directly
+
+Do NOT invoke `superpowers:writing-plans` or `superpowers:prd` — they are different skills with different downstream chains.

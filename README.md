@@ -83,6 +83,7 @@ Artifacts 統一存放在 `openspec/changes/{change-id}/`。
 |-------|------|
 | `resume` | session 入口；偵測 in-flight change 並路由回對應 skill |
 | `brainstorming` | 開始任何新功能前探索需求與設計方案 |
+| `prd` |（optional）在 brainstorming 後、writing-plans 前，產生 Product Requirements Document 並存入 `openspec/changes/{change-id}/prd.md` |
 | `writing-plans` | 將 design.md 分解為帶 acceptance criteria 的 tasks.md |
 | `writing-uml` | 用 PlantUML 產生架構圖 |
 | `writing-figma` | 將設計同步到 Figma |
