@@ -142,6 +142,13 @@ doc_language: {doc_language}
 - NFR and Technical Considerations are optional; omit entire sections for small features rather than leaving them empty.
 - Goals must be measurable where possible ("reduce X by 50%", not "improve X").
 - Non-Goals are as important as Goals — make scope boundaries explicit.
+- **Rule 1 — Acceptance Criteria: user-observable only.** Every AC must describe behavior or outcomes observable by a user or business stakeholder. Prohibited: class names, API field names, topic names, state machine enum values, third-party component names (e.g., ShedLock, Kafka, circuit breaker).
+  - Bad: `透過 REST API 建立 type=DISCOUNT 的活動，帶 ruleConfig、targetSpec`
+  - Good: `行銷人員可建立含折扣規則的活動，並指定目標受眾與觸達計畫`
+- **Rule 2 — Functional Requirements: capability, not implementation.** FR entries describe what the system must be able to do, not how it does it. No architecture terms, component names, or data schema references.
+  - Bad: `FR-008: reach.orchestrator 必須是 reach.requested topic 的唯一消費者`
+  - Good: `FR-008: 系統必須確保同一活動的觸達請求不重複執行`
+- **Rule 3 — Technical Considerations (Section 7): scope constraints only.** Section 7 may only contain constraints that limit the requirements scope (e.g., "本期僅提供後端 API，不含管理 UI"). Do not reproduce architecture decisions from design.md. If no such constraints exist, omit the section entirely.
 
 ## Transition Handoff
 
