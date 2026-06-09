@@ -23,6 +23,7 @@
   ],
   "skills": [
     "./skills/gws-reference",
-    "./skills/notion-article-import"
+    "./skills/notion-article-import",
+    "./skills/writing-skills"
   ]
 }
