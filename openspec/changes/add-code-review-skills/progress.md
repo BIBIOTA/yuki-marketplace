@@ -20,3 +20,18 @@
 - Task: 1.2 移植 code-reviewer.md
 - Transition: not_started → in_progress
 - Next action: 建立 code-reviewer.md，忠實移植 reviewer template 並加入 {USER_LANGUAGE} 語言指令與 placeholder 說明
+
+## Session 4 — 2026-06-10 09:40
+- Stage: SDD
+- Task: 1.2 移植 code-reviewer.md
+- Transition: in_progress → passing
+- Evidence:
+  - Commits: 7c682a0 feat: add code-reviewer template with USER_LANGUAGE placeholder (task 1.2)
+  - Tests: 無可執行測試；inline spec 合規 + code quality 兩視角審查皆 APPROVE
+- Next action: 進入 task 2.1，移植 receiving-code-review/SKILL.md 並加入 `<language>` 區塊
+
+## Session 5 — 2026-06-10 09:41
+- Stage: SDD
+- Task: 2.1 移植 receiving-code-review/SKILL.md
+- Transition: not_started → in_progress
+- Next action: 建立 receiving-code-review/SKILL.md，忠實移植 superpowers 內容並加入 `<language>` 區塊
