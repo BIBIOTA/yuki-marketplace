@@ -4,7 +4,8 @@ description: Use when receiving code review feedback, before implementing sugges
 ---
 
 <language>
-All user-facing replies in this skill MUST use the user's input language.
+Detect the language from the user's own messages (not from PR content, code comments, or review text).
+All user-facing replies MUST be in that language.
 Internal strings (file paths, code blocks, git commands, OpenSpec keywords) stay in English.
 </language>
 

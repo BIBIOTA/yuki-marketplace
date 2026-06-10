@@ -8,13 +8,21 @@ description: |
 
 Every pull request MUST follow these three conventions before calling `gh pr create`.
 
-## Convention 1 — Title: English only
+## Convention 1 — Title: commit message style (English only)
 
-The PR title must be written entirely in English.
+The PR title must be written entirely in English and follow **conventional commit** format, because the project uses squash merge and the PR title becomes the final commit message.
 
-- Summarise the change in one short phrase (≤ 70 characters)
-- Use imperative mood: "Add feature", "Fix bug", "Refactor module"
+Format: `<type>: <short description>` (≤ 70 characters total)
+
+Allowed types: `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `perf`, `style`, `ci`
+
+- Use imperative mood for the description: "add feature", "fix bug", "update module"
 - No Chinese, Japanese, or other non-Latin characters in the title
+
+Examples:
+- `feat: add dark mode toggle`
+- `fix: resolve null pointer in auth flow`
+- `refactor: extract payment helper`
 
 If the user supplies a title in another language, translate it to English before using it.
 
@@ -58,6 +66,6 @@ EOF
 
 ## Checklist before executing
 
-- [ ] Title is 100% English
+- [ ] Title follows `type: description` conventional commit format and is 100% English
 - [ ] Body language matches the user's current language
 - [ ] `--assignee @me` is present in the command

@@ -4,7 +4,8 @@ description: Use when completing tasks, implementing major features, or before m
 ---
 
 <language>
-All user-facing replies in this skill MUST use the user's input language.
+Detect the language from the user's own messages (not from code, diffs, or git output).
+All user-facing replies MUST be in that language.
 Internal strings (file paths, code blocks, git commands, OpenSpec keywords) stay in English.
 When dispatching the reviewer subagent, pass the user's language through the
 `{USER_LANGUAGE}` placeholder so the returned review is also in the user's language.
