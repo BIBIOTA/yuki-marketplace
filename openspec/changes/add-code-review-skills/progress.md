@@ -50,3 +50,27 @@
 - Task: 3.1 於 Claude plugin manifest 註冊兩個 skill
 - Transition: not_started → in_progress
 - Next action: 編輯 plugins/spec-driven-dev/.claude-plugin/plugin.json 的 skills array 新增兩個路徑
+
+## Session 8 — 2026-06-10 10:00
+- Stage: SDD
+- Task: 3.1 於 Claude plugin manifest 註冊兩個 skill
+- Transition: in_progress → passing
+- Evidence:
+  - Commits: 76d14f7 feat: register code-review skills in spec-driven-dev manifest (task 3.1)
+  - Tests: python3 -m json.tool 通過；version 0.1.0 未更動；.codex-plugin 未動
+- Next action: 進入 task 4.1，執行人工驗證所有檢查
+
+## Session 9 — 2026-06-10 10:01
+- Stage: SDD
+- Task: 4.1 人工驗證 skill 與註冊正確
+- Transition: not_started → in_progress
+- Next action: 跑 frontmatter / JSON / language 區塊 / placeholder 全部檢查
+
+## Session 10 — 2026-06-10 10:10
+- Stage: SDD
+- Task: 4.1 人工驗證 skill 與註冊正確
+- Transition: in_progress → passing
+- Evidence:
+  - Commits: （驗證任務，無新增程式碼；檢查涵蓋 0b73c95 / 7c682a0 / e6e0744 / 76d14f7）
+  - Tests: frontmatter ✓、python3 -m json.tool ✓、兩個 `<language>` 區塊 ✓、code-reviewer.md `{USER_LANGUAGE}` x2 ✓、requesting SKILL.md 填寫說明 ✓、manifest 註冊 ✓、openspec validate --strict 通過
+- Next action: 全部 task passing，轉入 spec-driven-dev:verification-before-completion
