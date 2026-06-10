@@ -5,7 +5,7 @@
   - Acceptance: WHEN 建立 `plugins/spec-driven-dev/skills/requesting-code-review/SKILL.md` THEN 內容忠實移植自 superpowers，frontmatter `name: requesting-code-review` 且開頭結尾有 `---` AND 在 frontmatter 之後正文之前含 `<language>` 區塊 AND 「Integration with Workflows」對應到 `spec-driven-dev:subagent-driven-development` 並說明與 `spec-driven-dev:verification-before-completion` 的關係 AND 「How to Request」說明填 template 前以對話語言填入 `{USER_LANGUAGE}`、且 `{PLAN_OR_REQUIREMENTS}` 在 `openspec/changes/{change-id}/` 存在時優先引用其 design.md / tasks.md
   - Depends on: -
   - Independence: independent
-  - status: not_started
+  - status: in_progress
 - [ ] 1.2 移植 `requesting-code-review/code-reviewer.md`（reviewer template + `{USER_LANGUAGE}` placeholder）
   - Acceptance: WHEN 建立 `plugins/spec-driven-dev/skills/requesting-code-review/code-reviewer.md` THEN 內容忠實移植自 superpowers AND prompt 開頭含一行 `Write all review output (Strengths, Issues, Assessment, etc.) in {USER_LANGUAGE}.` AND 文末 placeholder 清單新增 `{USER_LANGUAGE}` 說明
   - Depends on: 1.1
