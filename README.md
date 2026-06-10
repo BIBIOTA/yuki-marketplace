@@ -57,6 +57,8 @@ codex plugin add spec-driven-dev@yuki-marketplace
 | `running-coach-zh-tw` | 繁體中文專業跑步教練，分析 Strava/Garmin/Calendar/Notion 訓練資料 |
 | `gws-reference` | Google Workspace CLI（`gws`）指令速查表 |
 | `notion-article-import` | 將 Notion 文章匯入 bibiota-blog（VitePress Markdown 格式） |
+| `writing-skills` | 高品質文案寫作指南：說服原則、Anthropic best practices、圖表產生 |
+| `create-pr` | PR 格式規範：英文 title、使用者語系 description、自動設定 assignee；搭配 PostToolUse hook 驗證 |
 
 ### 📡 MCP Server 配置模板
 

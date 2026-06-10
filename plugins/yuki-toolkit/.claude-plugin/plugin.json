@@ -24,6 +24,7 @@
   "skills": [
     "./skills/gws-reference",
     "./skills/notion-article-import",
-    "./skills/writing-skills"
+    "./skills/writing-skills",
+    "./skills/create-pr"
   ]
 }
