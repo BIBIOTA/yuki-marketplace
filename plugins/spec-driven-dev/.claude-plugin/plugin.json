@@ -29,6 +29,8 @@
     "./skills/subagent-driven-development",
     "./skills/test-driven-development",
     "./skills/updating-spec",
-    "./skills/verification-before-completion"
+    "./skills/verification-before-completion",
+    "./skills/requesting-code-review",
+    "./skills/receiving-code-review"
   ]
 }

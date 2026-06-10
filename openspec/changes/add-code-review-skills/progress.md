@@ -35,3 +35,18 @@
 - Task: 2.1 移植 receiving-code-review/SKILL.md
 - Transition: not_started → in_progress
 - Next action: 建立 receiving-code-review/SKILL.md，忠實移植 superpowers 內容並加入 `<language>` 區塊
+
+## Session 6 — 2026-06-10 09:50
+- Stage: SDD
+- Task: 2.1 移植 receiving-code-review/SKILL.md
+- Transition: in_progress → passing
+- Evidence:
+  - Commits: e6e0744 feat: add receiving-code-review skill (task 2.1)
+  - Tests: 無可執行測試；inline spec 合規 + code quality 兩視角審查皆 APPROVE
+- Next action: 進入 task 3.1，於 .claude-plugin/plugin.json 註冊兩個 skill
+
+## Session 7 — 2026-06-10 09:51
+- Stage: SDD
+- Task: 3.1 於 Claude plugin manifest 註冊兩個 skill
+- Transition: not_started → in_progress
+- Next action: 編輯 plugins/spec-driven-dev/.claude-plugin/plugin.json 的 skills array 新增兩個路徑
