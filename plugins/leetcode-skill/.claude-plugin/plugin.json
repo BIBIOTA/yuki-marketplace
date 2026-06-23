@@ -13,6 +13,11 @@
     "practice"
   ],
   "skills": [
-    "./skills/leetcode-practice"
+    "./skills/leetcode",
+    "./skills/leetcode-hint",
+    "./skills/leetcode-run",
+    "./skills/leetcode-submit",
+    "./skills/leetcode-finish",
+    "./skills/leetcode-next"
   ]
 }

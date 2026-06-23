@@ -83,7 +83,12 @@ LeetCode 練習助手：透過題目 URL 開始真實練習，卡住時分階段
 
 | Skill | 說明 |
 |-------|------|
-| `leetcode-practice` | 真實題目練習（`/leetcode <url>`）、5 階漸進提示（`/hint`）、弱點追蹤（`/leetcode --next`）、進度儀表板（`/leetcode --profile`）、複習卡關題（`/leetcode --review`） |
+| `leetcode` | 開始練習（`/leetcode <url>`）、進度儀表板（`/leetcode --profile`）、複習卡關題（`/leetcode --review`） |
+| `leetcode-hint` | 漸進式提示（`/hint`）：5 階梯不跳級，跨 session 恢復進度 |
+| `leetcode-run` | 執行解法（`/run`）：跑範例 + 自動邊界測試，只回報結果不代為修正 |
+| `leetcode-submit` | 提交評分（`/submit`）：正確性、複雜度、程式品質、邊界意識各維度 Pass/Partial/Fail |
+| `leetcode-finish` | 結束 session（`/finish`）：記錄結果、更新弱點分析、寫 pattern 筆記 |
+| `leetcode-next` | 選下一題（`/next`）：依弱點率排序建議題目類型 + 推薦具體題目 |
 
 進度資料（`.leetcode/performance/`、`.leetcode/notes/`）由 skill 在使用端 project 自動建立，不隨 plugin 版控。
 
