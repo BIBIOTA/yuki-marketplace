@@ -11,6 +11,7 @@
 /plugin marketplace add BIBIOTA/yuki-marketplace
 /plugin install yuki-toolkit@yuki-marketplace
 /plugin install spec-driven-dev@yuki-marketplace
+/plugin install leetcode-skill@yuki-marketplace
 ```
 
 ### Codex
@@ -22,6 +23,7 @@
 codex plugin marketplace add /Users/bibiota/Documents/projects/yuki-marketplace
 codex plugin add yuki-toolkit@yuki-marketplace
 codex plugin add spec-driven-dev@yuki-marketplace
+codex plugin add leetcode-skill@yuki-marketplace
 ```
 
 ```bash
@@ -29,6 +31,7 @@ codex plugin add spec-driven-dev@yuki-marketplace
 codex plugin marketplace add BIBIOTA/yuki-marketplace
 codex plugin add yuki-toolkit@yuki-marketplace
 codex plugin add spec-driven-dev@yuki-marketplace
+codex plugin add leetcode-skill@yuki-marketplace
 ```
 
 安裝後需手動設定 MCP servers，詳見 [MCP 配置指南](plugins/yuki-toolkit/mcp-config.md)。
@@ -71,6 +74,18 @@ codex plugin add spec-driven-dev@yuki-marketplace
 | Notion | 筆記管理 | `@notionhq/notion-mcp-server` |
 | Garmin | 穿戴裝置數據 | `garmin_mcp` (Python/UV) |
 | Chrome DevTools | 瀏覽器自動化 | `chrome-devtools-mcp` |
+
+## Plugin: leetcode-skill
+
+LeetCode 練習助手：透過題目 URL 開始真實練習，卡住時分階段提示，完整追蹤跨 session 進度。
+
+### Skills
+
+| Skill | 說明 |
+|-------|------|
+| `leetcode-practice` | 真實題目練習（`/leetcode <url>`）、5 階漸進提示（`/hint`）、弱點追蹤（`/leetcode --next`）、進度儀表板（`/leetcode --profile`）、複習卡關題（`/leetcode --review`） |
+
+進度資料（`.leetcode/performance/`、`.leetcode/notes/`）由 skill 在使用端 project 自動建立，不隨 plugin 版控。
 
 ## Plugin: spec-driven-dev
 
