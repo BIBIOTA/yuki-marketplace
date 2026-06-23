@@ -90,6 +90,18 @@ LeetCode 練習助手：透過題目 URL 開始真實練習，卡住時分階段
 | `leetcode-finish` | 結束 session（`/finish`）：記錄結果、更新弱點分析、寫 pattern 筆記 |
 | `leetcode-next` | 選下一題（`/next`）：依弱點率排序建議題目類型 + 推薦具體題目 |
 
+### 使用流程
+
+```
+/leetcode <url>          ← 開始一題（fetch + 建 stub + 初始化 session）
+   ↓ 開始寫 code
+/run                     ← 執行範例 + 邊界測試，看哪些 case 掛掉
+/hint                    ← 卡住時呼叫，5 階梯漸進（可重複呼叫）
+/submit                  ← 全面評分：正確性、複雜度、品質、邊界意識
+/finish                  ← 記錄結果、更新弱點分析、寫 pattern 筆記
+/next                    ← 依弱點率挑下一題，接回 /leetcode <url>
+```
+
 進度資料（`.leetcode/performance/`、`.leetcode/notes/`）由 skill 在使用端 project 自動建立，不隨 plugin 版控。
 
 ## Plugin: spec-driven-dev
