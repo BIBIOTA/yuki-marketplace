@@ -28,6 +28,7 @@ jobs:
 
           bump_plugin "plugins/yuki-toolkit/.claude-plugin/plugin.json" "plugins/yuki-toolkit/.codex-plugin/plugin.json"
           bump_plugin "plugins/spec-driven-dev/.claude-plugin/plugin.json" "plugins/spec-driven-dev/.codex-plugin/plugin.json"
+          bump_plugin "plugins/leetcode-skill/.claude-plugin/plugin.json" "plugins/leetcode-skill/.codex-plugin/plugin.json"
 
       - name: Commit and push
         run: |
@@ -35,6 +36,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add plugins/yuki-toolkit/.claude-plugin/plugin.json plugins/yuki-toolkit/.codex-plugin/plugin.json
           git add plugins/spec-driven-dev/.claude-plugin/plugin.json plugins/spec-driven-dev/.codex-plugin/plugin.json
+          git add plugins/leetcode-skill/.claude-plugin/plugin.json plugins/leetcode-skill/.codex-plugin/plugin.json
           git diff --cached --quiet && echo "No version change needed" && exit 0
           git commit -m "chore: bump plugin versions"
           git push

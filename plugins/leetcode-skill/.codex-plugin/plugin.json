@@ -1,0 +1,15 @@
+{
+  "name": "leetcode-skill",
+  "description": "LeetCode 練習助手：真實題目 + 漸進式提示 + 跨 session 進度追蹤",
+  "version": "1.0.0",
+  "author": {
+    "name": "BIBIOTA"
+  },
+  "keywords": [
+    "leetcode",
+    "algorithms",
+    "data-structures",
+    "coding-interview",
+    "practice"
+  ]
+}
