@@ -70,12 +70,14 @@ current_hint_rung: 2
 run_attempts: 4
 run_failures: 3
 submit_result: passed
+pattern: Sliding Window
 started: 2026-06-23T10:15
 ```
 
 - `run_attempts` — total `/run` executions this session (default 0).
 - `run_failures` — number of runs where at least one case failed (default 0).
 - `submit_result` — Correctness verdict from `/submit`: `passed`, `partial`, or `fail`. Absent if `/submit` was never called.
+- `pattern` — pattern name confirmed at `/submit` (user's answer, corrected if needed). Absent if `/submit` was never called.
 
 Clear this file (or overwrite) when a problem is submitted or abandoned.
 

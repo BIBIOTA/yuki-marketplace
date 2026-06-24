@@ -69,9 +69,12 @@ Give direct feedback on their answer — don't just move on if they're wrong, co
 
 ## After evaluation
 
-Write the Correctness verdict to `.leetcode/performance/session-state.md`:
+Ask: "你覺得這題用的是什麼 pattern？（例如：Sliding Window、Two Pointers、Hash Table）"
+
+Give direct feedback if their answer is off. Then write to `.leetcode/performance/session-state.md`:
 - Correctness Pass → `submit_result: passed`
 - Correctness Partial → `submit_result: partial`
 - Correctness Fail → `submit_result: fail`
+- `pattern: <user's answer, corrected if needed>`
 
 Then remind the user to run `/finish` to log the result and update their pattern notes.

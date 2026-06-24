@@ -14,14 +14,14 @@ description: |
 
 ## Steps
 
-1. Read `.leetcode/performance/session-state.md` for: `current_problem`, `slug`, `current_hint_rung`, `submit_result`, `run_attempts`.
+1. Read `.leetcode/performance/session-state.md` for: `current_problem`, `slug`, `current_hint_rung`, `submit_result`, `run_attempts`, `pattern`, `started`.
 2. Derive result automatically — do not ask the user:
    - `submit_result: passed` + `current_hint_rung == 0` → **Passed**
    - `submit_result: passed` + `current_hint_rung >= 1` → **Passed (partial)**
    - `submit_result: partial` or `submit_result: fail` → **Struggled**
    - No `submit_result` (user never ran `/submit`) → **Gave up**
-3. Ask: "用了多少時間？（可略）"
-4. Ask: "這題的 pattern 是什麼？（例如：Sliding Window、Two Pointers、Hash Table）"
+3. Calculate time spent from `started` to now. If `started` is absent, omit the time field.
+4. Use `pattern` from session-state. If absent (user skipped `/submit`), leave the pattern field blank in logs.
 
 ---
 
