@@ -7,10 +7,10 @@ All files live under `.leetcode/` at the project root. Create them if missing.
 Append-only table, newest row at bottom:
 
 ```
-| Date       | Problem (# + name)      | Pattern         | Result      | Hint rung reached | Notes |
-|------------|--------------------------|------------------|--------------|--------------------|-------|
-| 2026-06-23 | 1. Two Sum               | Hash Table       | Passed       | 0                  |       |
-| 2026-06-23 | 3. Longest Substring...  | Sliding Window   | Struggled    | 4                  | Off-by-one on window shrink |
+| Date       | Problem (# + name)      | Pattern         | Result      | Hint rung reached | Run attempts | Notes |
+|------------|--------------------------|-----------------|-------------|-------------------|--------------|-------|
+| 2026-06-23 | 1. Two Sum               | Hash Table      | Passed      | 0                 | 2            |       |
+| 2026-06-23 | 3. Longest Substring...  | Sliding Window  | Struggled   | 4                 | 7            | Off-by-one on window shrink |
 ```
 
 Result values: `Passed`, `Passed (partial)`, `Struggled`, `Gave up`.
@@ -67,8 +67,13 @@ Tracks in-progress problem so `/hint` resumes correctly across turns/sessions:
 current_problem: 3. Longest Substring Without Repeating Characters
 slug: longest-substring-without-repeating-characters
 current_hint_rung: 2
+run_attempts: 4
+run_failures: 3
 started: 2026-06-23T10:15
 ```
+
+- `run_attempts` — total `/run` executions this session (default 0).
+- `run_failures` — number of runs where at least one case failed (default 0).
 
 Clear this file (or overwrite) when a problem is submitted or abandoned.
 
