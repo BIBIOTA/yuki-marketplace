@@ -14,9 +14,12 @@ description: |
 
 ## Steps
 
-1. Read `.leetcode/performance/session-state.md` for: `current_problem`, `slug`, `current_hint_rung`.
-2. If result isn't already known from this conversation, ask:
-   - "這題結果是？ `Passed` / `Passed (partial)` / `Struggled` / `Gave up`"
+1. Read `.leetcode/performance/session-state.md` for: `current_problem`, `slug`, `current_hint_rung`, `submit_result`, `run_attempts`.
+2. Derive result automatically — do not ask the user:
+   - `submit_result: passed` + `current_hint_rung == 0` → **Passed**
+   - `submit_result: passed` + `current_hint_rung >= 1` → **Passed (partial)**
+   - `submit_result: partial` or `submit_result: fail` → **Struggled**
+   - No `submit_result` (user never ran `/submit`) → **Gave up**
 3. Ask: "用了多少時間？（可略）"
 4. Ask: "這題的 pattern 是什麼？（例如：Sliding Window、Two Pointers、Hash Table）"
 

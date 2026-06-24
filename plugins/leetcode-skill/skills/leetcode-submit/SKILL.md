@@ -69,4 +69,9 @@ Give direct feedback on their answer — don't just move on if they're wrong, co
 
 ## After evaluation
 
-Remind the user to run `/finish` to log the result and update their pattern notes.
+Write the Correctness verdict to `.leetcode/performance/session-state.md`:
+- Correctness Pass → `submit_result: passed`
+- Correctness Partial → `submit_result: partial`
+- Correctness Fail → `submit_result: fail`
+
+Then remind the user to run `/finish` to log the result and update their pattern notes.
