@@ -11,9 +11,12 @@ Translate all gathered artifacts into a committed, validated OpenSpec proposal a
 <HARD-GATE>
 Do NOT invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development` until the user has explicitly approved proposal.md and all specs.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords, ADDED/MODIFIED/REMOVED/WHEN/THEN/AND/SHALL) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+**Language policy (read carefully — most output bugs come from violating this):**
 
-**Document language:** Write proposal.md and spec.md body prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language. OpenSpec structural keywords (ADDED, MODIFIED, REMOVED, WHEN, THEN, AND, SHALL) always remain in English.
+- `conversation_language` = the language of design.md's frontmatter, or the user's first message if no frontmatter is present. ALL user-facing prose (questions, prompts, transitions, error messages) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = read from design.md frontmatter; defaults to `conversation_language` if absent. proposal.md and spec.md body prose are written in `doc_language`.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns ("in-flight change", "resume", "spec") unless that English token is a literal identifier (file path, code symbol, OpenSpec keyword like `ADDED`/`MODIFIED`/`REMOVED`/`WHEN`/`THEN`/`AND`/`SHALL`, slash-command name). When in doubt, translate.
+- File paths, code blocks, OpenSpec structural keywords (`ADDED`, `MODIFIED`, `REMOVED`, `WHEN`, `THEN`, `AND`, `SHALL`), and slash-command names always stay in English regardless of either language.
 
 **Artifact reference enforcement:**
 1. Every existing diagram in `openspec/changes/{change-id}/diagrams/*.puml` AND every existing design in `openspec/changes/{change-id}/designs/figma.md` MUST be referenced via `> See: ...` from at least one requirement Scenario.
@@ -25,12 +28,12 @@ Do NOT invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:
 
 You MUST complete each item in order:
 
-1. **Detect language** — reuse the conversation language from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls the prose language for proposal.md and spec.md body content. Lock both for the conversation.
+1. **Detect language** — set `conversation_language` from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls the prose language for proposal.md and spec.md body content. Lock both for the conversation.
 1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 2.
-   - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
-     - On "resume" invoke `spec-driven-dev:resume-change`.
-     - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
+   - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 2 and ask the user — phrased naturally in `conversation_language` — whether they want to resume the existing in-flight change `{change-id}` or start a new one. Render the literal `{change-id}` value inline; do not translate the identifier.
+     - If the user chooses to resume, invoke `spec-driven-dev:resume-change`.
+     - If the user chooses to start a new change, warn (in `conversation_language`) that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
 2. **Read ALL artifacts** in `openspec/changes/{change-id}/`: `design.md`, `tasks.md`, `diagrams/*.puml` (if any), `designs/figma.md` (if it exists). Do not skip any file present.
 3. **OpenSpec CLI precheck** — run `command -v openspec` and `test -d openspec/`. If either check fails, abort with:
    > Install: `npm i -g @fission-ai/openspec`
@@ -61,15 +64,14 @@ You MUST complete each item in order:
    Fix any missing references before continuing.
 9. **Run `openspec validate {change-id} --strict`** — must exit 0. Fix any reported errors (see `./openspec-format.md` for common errors and fixes) and re-run until clean.
 10. **Self-review four checks** (see [Spec Self-Review](#spec-self-review) section). Confirm every diagram and design is referenced from at least one Scenario. Fix inline.
-11. **User review gate** — say verbatim:
-    > "proposal.md and specs/ written to `openspec/changes/{change-id}/`. Validation passed. All diagrams and designs are referenced from at least one Scenario. Please review the proposal and specs, then tell me whether to proceed with SDD or TDD."
+11. **User review gate** — tell the user, in `conversation_language`, that proposal.md and specs/ have been written to `openspec/changes/{change-id}/`, that validation passed, and that all diagrams and designs are referenced from at least one Scenario. Ask them to review and then choose between SDD and TDD for the next step. Render the literal `{change-id}` value inline.
 
     Then commit:
     ```bash
     git add openspec/changes/{change-id}/
     git commit -m "docs: add OpenSpec proposal and specs for {change-id}"
     ```
-12. **Transition** — ask the user "SDD or TDD?" then invoke exactly one:
+12. **Transition** — ask the user, in `conversation_language`, whether to proceed with SDD or TDD, then invoke exactly one (keep the skill identifiers verbatim because they are command names):
     - `spec-driven-dev:subagent-driven-development` — if the user chooses SDD (parallel, independent tasks)
     - `spec-driven-dev:test-driven-development` — if the user chooses TDD (red-green-refactor cycle)
 

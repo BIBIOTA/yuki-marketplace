@@ -10,21 +10,24 @@ Decompose an approved design into a concrete, reviewable task checklist, then ha
 <HARD-GATE>
 Do NOT invoke `spec-driven-dev:writing-uml`, `spec-driven-dev:writing-figma`, or `spec-driven-dev:writing-spec` until the user has approved tasks.md.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English. Reuse the language detected in design.md or the first user message.
+**Language policy (read carefully — most output bugs come from violating this):**
 
-**Document language:** Write tasks.md body prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language.
+- `conversation_language` = the language of design.md's frontmatter, or the user's first message if no frontmatter is present. ALL user-facing prose (questions, prompts, transitions, error messages) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = read from design.md frontmatter; defaults to `conversation_language` if absent. tasks.md body prose is written in `doc_language`.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns ("in-flight change", "resume", "task") unless that English token is a literal identifier (file path, code symbol, OpenSpec keyword like `WHEN`/`THEN`/`ADDED`, slash-command name, status enum like `in_progress`). When in doubt, translate.
+- File paths, code blocks, OpenSpec structural keywords, status enums (`not_started`/`in_progress`/`passing`/`blocked`), and slash-command names always stay in English regardless of either language.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — reuse the conversation language from design.md frontmatter (or fall back to the user's first message language). Also read `doc_language` from design.md frontmatter; this controls what language to write tasks.md body prose in. Lock both for the conversation.
+1. **Detect language** — set `conversation_language` from design.md frontmatter (or fall back to the user's first message language). Also read `doc_language` from design.md frontmatter; this controls what language to write tasks.md body prose in. Lock both for the conversation.
 2. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found (other than the one matching this skill's argument), proceed directly to step 3 — no warning, no prompt.
-   - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 3 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
-     - On "resume" invoke `spec-driven-dev:resume-change`.
-     - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 3.
+   - If any in-flight change OTHER than the one matching this skill's argument is found, pause before step 3 and ask the user — phrased naturally in `conversation_language` — whether they want to resume the existing in-flight change `{change-id}` or start a new one. Render the literal `{change-id}` value inline; do not translate the identifier.
+     - If the user chooses to resume, invoke `spec-driven-dev:resume-change`.
+     - If the user chooses to start a new change, warn (in `conversation_language`) that the in-flight change's progress is preserved but this session switches context, then proceed to step 3.
 3. **Read `openspec/changes/{change-id}/design.md`** completely.
 4. **Validate change-id and directory exist.** If not, escalate: "design.md not found — return to spec-driven-dev:brainstorming."
 5. **Decompose into bite-sized tasks.** Each task entry must include:
@@ -32,14 +35,14 @@ You MUST create a task for each of these items and complete them in order:
    - Acceptance criteria using `WHEN ... THEN ...` (and optionally `AND`) format
    - Dependencies: list any prerequisite task numbers
    - Independence estimate (note as `independent`, `serial`, or `parallel-safe` — used by downstream SDD/TDD selection)
-6. **Confirm optional artifacts** with this exact multi-select prompt (verbatim, but adapt language):
-   > Does this change require any of the following artifacts before implementation? (multi-select)
-   > - [ ] PlantUML diagrams (spec-driven-dev:writing-uml) — fits: complex flows, state machines, cross-component interactions, ER schemas
-   > - [ ] Figma designs (spec-driven-dev:writing-figma) — fits: frontend UI, interactive prototypes, A/B version comparison
+6. **Confirm optional artifacts** — ask, in `conversation_language`, whether this change requires any of the following artifacts before implementation. Present as a multi-select with these two options (keep the skill identifiers verbatim because they are command names):
+   - PlantUML diagrams (`spec-driven-dev:writing-uml`) — fits: complex flows, state machines, cross-component interactions, ER schemas
+   - Figma designs (`spec-driven-dev:writing-figma`) — fits: frontend UI, interactive prototypes, A/B version comparison
+
+   The English wording above is illustrative — re-render the question and the descriptions in `conversation_language`; do not paste them as-is.
 7. **Write tasks.md** to `openspec/changes/{change-id}/tasks.md` using the template below. Include a `## Optional artifacts` section marking the user's selection.
 8. **Spec self-review** — four checks: placeholder / consistency / scope / ambiguity. Fix inline.
-9. **User review gate** — say verbatim:
-   > "tasks.md written to `{path}`. Please review and tell me whether to proceed or make changes."
+9. **User review gate** — tell the user, in `conversation_language`, that tasks.md has been written to `{path}` and ask whether to proceed or make changes. Render the literal `{path}` value as-is.
 
    Then `git add` and `git commit` the file:
    ```

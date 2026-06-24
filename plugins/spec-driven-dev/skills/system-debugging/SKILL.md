@@ -17,14 +17,19 @@ Do NOT propose or implement a fix until you have:
 
 If the issue cannot be reproduced, do not guess. Gather more observations, document what was tried, and state what evidence is missing.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal file paths, commands, and OpenSpec keywords stay in English. Reuse the language detected in `design.md`, `tasks.md`, or the user's first message.
+**Language policy (read carefully — most output bugs come from violating this):**
+
+- `conversation_language` = the language detected from `design.md` / `tasks.md` frontmatter (when a change context exists), or the user's first message. ALL user-facing prose (questions, status updates, hypotheses surfaced to the user, evidence summaries) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = read from design.md frontmatter if a change context exists; defaults to `conversation_language` otherwise. The body prose of `debugging-report.md` is written in `doc_language`. Section headings of the report template stay in English (they are structural anchors); the prose under them follows `doc_language`.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns unless that English token is a literal identifier (file path, code symbol, shell command, log field name, OpenSpec keyword, slash-command name). When in doubt, translate.
+- File paths, code blocks, shell commands, OpenSpec structural keywords, and slash-command names always stay in English regardless of either language.
 </HARD-GATE>
 
 ## Checklist
 
 Complete each item in order:
 
-1. **Detect language** - reuse the language from existing change artifacts or the user's first message.
+1. **Detect language** - set `conversation_language` from existing change artifacts (design.md / tasks.md frontmatter) or the user's first message. Set `doc_language` from design.md frontmatter, or fall back to `conversation_language`. Lock both for the conversation.
 2. **Identify change context** - locate `openspec/changes/{change-id}/`; if no change-id exists, create the debugging report under `openspec/changes/debug-{short-slug}/debugging-report.md` and clearly mark it as a debugging-only artifact.
 3. **Read expected behavior** - read relevant `design.md`, `tasks.md`, `specs/*/spec.md`, verification reports, failing test output, and the user's bug report.
 4. **Map system layers** - list the layers that could participate in the bug: UI/browser, frontend state, network/API, backend service, database, cache, queue/worker, file storage, external provider, CI/runtime environment.

@@ -6,9 +6,14 @@ description: Use when implementation is complete and you need to verify before c
 # Verification Before Completion
 
 <HARD-GATE>
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, commands) stay in English.
+**Language policy (read carefully — most output bugs come from violating this):**
 
-1. ANY stage fail → integral fail. Route back to the originating skill: code failures → `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`; spec failures → `spec-driven-dev:writing-spec`; progress-log failures (Stage 2 `progress.md` gate) → ask the user "SDD or TDD?" then route to the chosen implementation skill; diagram failures → `spec-driven-dev:writing-uml`; design failures → `spec-driven-dev:writing-figma`.
+- `conversation_language` = the language detected from the current change's `design.md` / `proposal.md` frontmatter, or the user's first message. ALL user-facing prose (stage outcomes, failure reports, the final "all passed" message, routing prompts) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = read from design.md frontmatter; defaults to `conversation_language` if absent. `verification-report.md` body prose follows `doc_language`. The report template section headings (`## Summary`, `## Code Evidence`, etc.) and status tokens (`PASS`, `FAIL`, `n/a`, `MANUAL-REVIEW`) stay in English regardless of `doc_language` — they are structural anchors.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns unless that English token is a literal identifier (file path, code symbol, command, OpenSpec keyword, status token, slash-command name). When in doubt, translate.
+- File paths, code blocks, commands, status tokens (`PASS`/`FAIL`/`n/a`/`MANUAL-REVIEW`), OpenSpec structural keywords, and slash-command names always stay in English regardless of either language.
+
+1. ANY stage fail → integral fail. Route back to the originating skill: code failures → `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`; spec failures → `spec-driven-dev:writing-spec`; progress-log failures (Stage 2 `progress.md` gate) → ask the user, in `conversation_language`, whether to proceed with SDD or TDD then route to the chosen implementation skill; diagram failures → `spec-driven-dev:writing-uml`; design failures → `spec-driven-dev:writing-figma`.
 2. `verification-report.md` MUST be written to `openspec/changes/{change-id}/verification-report.md`. If the file is missing at skill exit → skill is not complete.
 3. Suggest `openspec archive {change-id}` ONLY on full pass (all stages PASS or n/a).
 </HARD-GATE>
@@ -47,7 +52,7 @@ Complete all stages in order. Do not skip stages unless the conditional is satis
    > **Note**: `{change-id}` is a placeholder. Substitute the actual change ID before running.
 
 6. **progress.md gate** — read `openspec/changes/{change-id}/progress.md`.
-   - If the file does not exist → Stage 2 FAIL with reason `progress.md missing`. Ask the user "SDD or TDD?" and re-invoke the chosen implementation skill (`spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`), mirroring the Stage 1 failure routing pattern.
+   - If the file does not exist → Stage 2 FAIL with reason `progress.md missing`. Ask the user, in `conversation_language`, whether to proceed with SDD or TDD, then re-invoke the chosen implementation skill (`spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`), mirroring the Stage 1 failure routing pattern.
    - If the file exists but its last `## Session N` block has no `- Next action:` line, or that line is empty → Stage 2 FAIL with reason `progress.md last entry has empty Next action`. Same routing as above.
    - Otherwise record `Progress log: PASS` and proceed to the next check.
 
@@ -63,7 +68,7 @@ Complete all stages in order. Do not skip stages unless the conditional is satis
    - **State diagram** (`state` keyword): extract states and transitions (`state A --> B`). Compare to enum values and switch/if-else state-machine logic in `src/`. PASS / FAIL / MANUAL-REVIEW.
    - **Class diagram** (`class` / `interface`): extract entity names and public methods. Compare to actual `class`, `interface`, or `type` definitions in `src/`. PASS / FAIL / MANUAL-REVIEW.
    - **ER diagram** (`entity` keyword): extract entities and relations. Compare to migration DDL files or ORM model definitions. PASS / FAIL / MANUAL-REVIEW.
-   - **Activity / Use case / Component / Deployment**: mark MANUAL-REVIEW. Display the `.puml` content to the user and ask: "Does this diagram still accurately reflect the implementation? Reply go or no-go." Block until the user responds. Record the response.
+   - **Activity / Use case / Component / Deployment**: mark MANUAL-REVIEW. Display the `.puml` content to the user and ask, in `conversation_language`, whether the diagram still accurately reflects the implementation. Make clear that the expected reply is `go` or `no-go` (those two tokens stay in English so this skill can pattern-match the response). Block until the user responds. Record the response.
 
    Any FAIL → Stage 3 FAIL. MANUAL-REVIEW with user no-go → Stage 3 FAIL.
 
@@ -87,14 +92,12 @@ Complete all stages in order. Do not skip stages unless the conditional is satis
 
 11. **Write `verification-report.md`** — write the report (using the template below) to `openspec/changes/{change-id}/verification-report.md`. This file MUST exist before the skill exits.
 
-12. **If ALL stages pass (or n/a)** — print to the user:
+12. **If ALL stages pass (or n/a)** — tell the user, in `conversation_language`, that all verification stages passed and recommend that they run `openspec archive {change-id}` as the next step. Keep the command string `openspec archive {change-id}` verbatim (substitute the literal change-id but do not translate the command).
 
-    > "All verification stages passed. Suggested next step: `openspec archive {change-id}`."
-
-13. **If ANY stage fails** — list each failed item with its stage number and route back:
+13. **If ANY stage fails** — list each failed item with its stage number — in `conversation_language` — and route back as below:
     - Code fail (Stage 1) → re-invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`
     - Spec fail (Stage 2, `openspec validate` or `tasks.md completeness`) → re-invoke `spec-driven-dev:writing-spec`
-    - Progress-log fail (Stage 2, `progress.md gate`) → ask the user "SDD or TDD?" and re-invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development` accordingly, mirroring Stage 1 routing
+    - Progress-log fail (Stage 2, `progress.md gate`) → ask the user, in `conversation_language`, whether to proceed with SDD or TDD, then re-invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development` accordingly (mirroring Stage 1 routing)
     - Diagram fail (Stage 3) → re-invoke `spec-driven-dev:writing-uml`
     - Design fail (Stage 4) → re-invoke `spec-driven-dev:writing-figma`
 
@@ -155,7 +158,7 @@ digraph verification_before_completion {
 
 ## `verification-report.md` Template
 
-Write this file verbatim (substituting all `{...}` placeholders) to `openspec/changes/{change-id}/verification-report.md`:
+Write this file to `openspec/changes/{change-id}/verification-report.md`. Substitute every `{...}` placeholder. The section headings (`## Summary`, `## Code Evidence`, etc.) and status tokens (`PASS`, `FAIL`, `n/a`, `MANUAL-REVIEW`) stay in English regardless of `doc_language`; the prose values you write into the placeholders (e.g., the `Next Actions` bullets, the `Notes` column) follow `doc_language`.
 
 ````markdown
 # Verification Report: {change-id}

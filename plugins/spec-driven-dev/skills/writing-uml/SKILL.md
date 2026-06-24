@@ -10,16 +10,19 @@ Translate selected diagram types into committed PlantUML sources, then hand off 
 <HARD-GATE>
 Do NOT invoke `spec-driven-dev:writing-figma` or `spec-driven-dev:writing-spec` until all selected diagrams are user-approved and committed.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, PlantUML syntax keywords) stay in English. Reuse the language detected in design.md frontmatter or the first user message.
+**Language policy (read carefully — most output bugs come from violating this):**
 
-**Document language:** Write PlantUML label text and design.md update prose in the `doc_language` value from design.md frontmatter. If no frontmatter is present, default to the detected conversation language.
+- `conversation_language` = the language of design.md's frontmatter, or the user's first message if no frontmatter is present. ALL user-facing prose (questions, prompts, transitions, preview instructions) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = read from design.md frontmatter; defaults to `conversation_language` if absent. PlantUML label text (actor names, state labels, activity descriptions, message labels) and design.md update prose are written in `doc_language`. PlantUML syntax keywords (`@startuml`, `@enduml`, `state`, `class`, `actor`, `->`, arrows, stereotypes, etc.) ALWAYS stay in English regardless of `doc_language` — they are language tokens, not prose.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns unless that English token is a literal identifier (file path, PlantUML keyword, file-name fragment like `sequence`/`class`/`er`, slash-command name). When in doubt, translate.
+- File paths, code blocks, PlantUML syntax keywords, the file-naming `type` fragment (sequence/class/use-case/activity/state/component/er/deployment), and slash-command names always stay in English regardless of either language.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — reuse the conversation language from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls diagram label text and prose in design.md updates. Lock both for the conversation.
+1. **Detect language** — set `conversation_language` from design.md frontmatter or the user's first message. Also read `doc_language` from design.md frontmatter; this controls diagram label text and prose in design.md updates. Lock both for the conversation.
 2. **Read** `openspec/changes/{change-id}/design.md` and `openspec/changes/{change-id}/tasks.md` completely. Note which diagram types tasks.md marks as required.
 3. **Present the diagram type menu** as a multi-select prompt. For each type, describe what it represents and list 2-3 typical use cases. Use the table in the [Diagram Type Menu](#diagram-type-menu) section below. Full PlantUML syntax examples are in `./diagram-types.md`.
 4. **For each selected diagram type**, in order:

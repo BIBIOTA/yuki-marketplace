@@ -4,11 +4,12 @@ description: Use when completing tasks, implementing major features, or before m
 ---
 
 <language>
-Detect the language from the user's own messages (not from code, diffs, or git output).
-All user-facing replies MUST be in that language.
-Internal strings (file paths, code blocks, git commands, OpenSpec keywords) stay in English.
-When dispatching the reviewer subagent, pass the user's language through the
-`{USER_LANGUAGE}` placeholder so the returned review is also in the user's language.
+**Language policy (read carefully — most output bugs come from violating this):**
+
+- `conversation_language` = the language detected from the user's own messages (NOT from code, diffs, or git output). ALL user-facing prose (questions, prompts, transitions, error messages) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns unless that English token is a literal identifier (file path, code symbol, git command, OpenSpec keyword, slash-command name, placeholder like `{USER_LANGUAGE}`). When in doubt, translate.
+- File paths, code blocks, git commands, OpenSpec structural keywords, and slash-command names always stay in English regardless of `conversation_language`.
+- When dispatching the reviewer subagent, pass the value of `conversation_language` through the `{USER_LANGUAGE}` placeholder so the returned review is also rendered in that language. The example value shown in the *Example* section below is illustrative — substitute the actual `conversation_language` at dispatch time.
 </language>
 
 # Requesting Code Review
@@ -46,7 +47,7 @@ Use Task tool with `general-purpose` type, fill template at `code-reviewer.md`
 - `{PLAN_OR_REQUIREMENTS}` - What it should do. If an `openspec/changes/{change-id}/` directory exists for the current work, prefer referencing its `design.md` / `tasks.md` (and `specs/` scenarios) as the source of truth.
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
-- `{USER_LANGUAGE}` - The current conversation language. Fill this with the user's input language before dispatching, so the reviewer returns its review in that language.
+- `{USER_LANGUAGE}` - The current `conversation_language`. Fill this with the user's input language before dispatching, so the reviewer returns its review in that language. Do NOT hardcode a default value (e.g., do not pre-fill `繁體中文`); always resolve from `conversation_language`.
 
 **3. Act on feedback:**
 - Fix Critical issues immediately
@@ -55,6 +56,8 @@ Use Task tool with `general-purpose` type, fill template at `code-reviewer.md`
 - Push back if reviewer is wrong (with reasoning)
 
 ## Example
+
+The example below shows one possible dispatch shape. The `USER_LANGUAGE` value is illustrative — at dispatch time, substitute the active `conversation_language`.
 
 ```
 [Just completed Task 2: Add verification function]
@@ -69,7 +72,7 @@ HEAD_SHA=$(git rev-parse HEAD)
   PLAN_OR_REQUIREMENTS: Task 2 from docs/superpowers/plans/deployment-plan.md
   BASE_SHA: a7981ec
   HEAD_SHA: 3df7661
-  USER_LANGUAGE: 繁體中文
+  USER_LANGUAGE: {conversation_language}   # e.g., English, 繁體中文, 日本語 — fill from the live value
 
 [Subagent returns]:
   Strengths: Clean architecture, real tests
