@@ -10,9 +10,12 @@ Update an existing spec-driven-dev change when the user changes the requirement 
 <HARD-GATE>
 Do NOT change implementation code before the spec update is complete and approved.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal file paths, commands, and OpenSpec keywords stay in English. Reuse the language detected in the existing change artifacts or the user's message.
+**Language policy (read carefully — most output bugs come from violating this):**
 
-**Document language:** Preserve the existing artifact language. If artifacts contain `doc_language` frontmatter, use that value for all updated prose.
+- `conversation_language` = the language detected from existing change artifacts (design.md / proposal.md frontmatter) or the user's message. ALL user-facing prose (questions, prompts, transitions, status updates, error messages) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = read from existing artifact frontmatter; preserve it. If artifacts have no `doc_language`, fall back to `conversation_language`. NEVER switch the document language during an update — keep all newly written prose consistent with the existing artifact body language.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns unless that English token is a literal identifier (file path, code symbol, OpenSpec keyword like `ADDED`/`MODIFIED`/`REMOVED`, slash-command name). When in doubt, translate.
+- File paths, code blocks, OpenSpec structural keywords, and slash-command names always stay in English regardless of either language.
 
 **Scope protection:** This skill is only for requirement-scope changes to the current spec-driven-dev change. If the request is a bug in existing behavior, invoke `spec-driven-dev:system-debugging`. If the request is a new unrelated feature, invoke `spec-driven-dev:brainstorming`.
 </HARD-GATE>
@@ -40,10 +43,9 @@ Complete each item in order:
     - Artifacts updated
     - Validation command and result
     - Next action
-11. **User review gate** — say:
-    > "Spec update written for `openspec/changes/{change-id}/`. Validation passed. Please review the updated spec artifacts, then tell me whether to proceed with implementation or verification."
+11. **User review gate** — tell the user, in `conversation_language`, that the spec update has been written for `openspec/changes/{change-id}/`, that validation passed, and ask them to review the updated spec artifacts before choosing whether to proceed with implementation or verification. Render the literal `{change-id}` value inline.
 12. **Route next step**:
-    - If new implementation work is needed, ask "SDD or TDD?" and invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development`.
+    - If new implementation work is needed, ask — in `conversation_language` — whether to proceed with SDD or TDD, then invoke `spec-driven-dev:subagent-driven-development` or `spec-driven-dev:test-driven-development` accordingly.
     - If implementation already matches the updated spec, invoke `spec-driven-dev:verification-before-completion`.
 
 ## Process Flow

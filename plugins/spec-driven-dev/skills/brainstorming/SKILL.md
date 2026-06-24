@@ -10,9 +10,12 @@ Turn ideas into fully formed designs through natural collaborative dialogue, the
 <HARD-GATE>
 Do NOT invoke any implementation skill, write code, or scaffold files until design.md is approved by the user. This applies to EVERY project regardless of perceived simplicity.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English.
+**Language policy (read carefully — most output bugs come from violating this):**
 
-**Document language:** The body prose of design.md (and all downstream artifacts) MUST be written in the `doc_language` the user selects in step 5. If step 5 is skipped or the user does not answer, `doc_language` MUST default to the detected conversation language — NEVER default to English unless the conversation is in English. This is separate from the conversation reply language.
+- `conversation_language` = the language the user wrote their first message in. ALL user-facing prose you produce (questions, prompts, transitions, error messages) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- `doc_language` = the language used inside generated documents (design.md body, tasks.md, proposal.md, etc.). Selected in step 5; defaults to `conversation_language` if the user does not pick.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns ("in-flight change", "resume", "task", "PRD" written inline in a Chinese sentence) unless that English token is a literal identifier (file path, code symbol, OpenSpec keyword like `ADDED`/`WHEN`/`THEN`, slash-command name like `/prd`). When in doubt, translate.
+- File paths, code blocks, OpenSpec structural keywords, and slash-command names always stay in English regardless of either language.
 </HARD-GATE>
 
 ## Anti-Pattern: "This Is Too Simple To Need A Design"
@@ -23,25 +26,26 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — use the language of the user's first message; lock it for the whole conversation
+1. **Detect language** — set `conversation_language` to the language of the user's first message; lock it for the whole conversation.
 1.5. **In-flight change precheck** — scan `openspec/changes/*/` for directories that have `design.md` but no `verification-report.md` (= in-flight).
    - If no in-flight change is found, proceed directly to step 2.
-   - If any in-flight change is found, pause before step 2 and prompt the user verbatim: "偵測到 in-flight change `{change-id}`，要 resume 還是開新？".
-     - On "resume" invoke `spec-driven-dev:resume-change`.
-     - On "新" emit a warning that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
+   - If any in-flight change is found, pause before step 2 and ask the user — phrased naturally in `conversation_language` — whether they want to resume the existing in-flight change `{change-id}` or start a new one. Render the literal `{change-id}` value inline; do not translate the identifier.
+     - If the user chooses to resume, invoke `spec-driven-dev:resume-change`.
+     - If the user chooses to start a new change, warn (in `conversation_language`) that the in-flight change's progress is preserved but this session switches context, then proceed to step 2.
 2. **Explore project context** — run `ls`, `git log -10`, read README and CLAUDE.md; detect if this is a frontend project via package.json / next.config / vite.config
 3. **Scope check** — if the request includes multiple independent subsystems, help decompose first; brainstorm only the first sub-project through this session
 4. **Decide change-id** — Propose a tentative change-id from the user's initial description (kebab-case verb+noun: `add-`, `refactor-`, `fix-`, `remove-`). Revise after clarifying questions if the scope or framing shifts.
-5. **Ask document language** — ask which language the generated documents (design.md, tasks.md, proposal.md, etc.) should be written in. Present as multiple choice with the detected conversation language pre-selected as default:
-   > "Which language should the generated documents be written in?"
-   > 1. {detected conversation language} (same as our conversation) — **(default)**
-   > 2. English
-   > 3. 繁體中文 (Traditional Chinese)
-   > 4. 简体中文 (Simplified Chinese)
-   > 5. 日本語 (Japanese)
-   > 6. Other (specify)
+5. **Ask document language** — ask, in `conversation_language`, which language the generated documents (design.md, tasks.md, proposal.md, etc.) should be written in. Present as multiple choice with `conversation_language` pre-selected as the default. The offered options must include at minimum:
+   - `conversation_language` (labelled as "same as our conversation") — marked as the default
+   - English
+   - 繁體中文 (Traditional Chinese)
+   - 简体中文 (Simplified Chinese)
+   - 日本語 (Japanese)
+   - Other (let the user specify)
 
-   Lock the chosen language as `doc_language` for all downstream document generation.
+   The native-name labels above (`繁體中文`, `日本語`, etc.) are language names and stay in their native script regardless of `conversation_language`. The surrounding prose (the question itself, "same as our conversation", "Other") must be rendered in `conversation_language`.
+
+   Lock the chosen language as `doc_language` for all downstream document generation. If the user does not answer or skips, default `doc_language` to `conversation_language`.
 6. **Clarifying questions** — one at a time, multiple choice preferred; cover purpose / constraints / success criteria
 7. **Propose 2-3 approaches** — with trade-offs; lead with the recommended option and reason
 8. **Present design in sections** — architecture / components / data flow / error handling / testing; ask after each section
@@ -58,18 +62,13 @@ You MUST create a task for each of these items and complete them in order:
     ```
     Write all body prose in `doc_language`. File paths, code blocks, and OpenSpec keywords stay in English.
 11. **Spec self-review** — placeholder scan / internal consistency / scope / ambiguity; fix inline, no re-review needed
-12. **User review gate** — say verbatim: "Spec written to `{path}`. Please review and let me know if you want changes before we commit and move to writing-plans."
+12. **User review gate** — tell the user, in `conversation_language`, that the design has been written to `{path}` and ask them to review and request changes before committing and moving to writing-plans. Render the literal `{path}` value as-is.
 13. **Commit** — after user approval, stage and commit:
     ```
     git add openspec/changes/{change-id}/design.md
     git commit -m "docs: add design for {change-id}"
     ```
-14. **Transition** — after user approves, ask:
-    > "設計已完成。要先建立 PRD（`spec-driven-dev:prd`）再進入實作計畫，還是直接跳到 writing-plans？"
-    > 1. 建立 PRD — invoke `spec-driven-dev:prd`
-    > 2. 直接跳到 writing-plans — invoke `spec-driven-dev:writing-plans`
-
-    Adapt the prompt language to the user's conversation language. Invoke only the `spec-driven-dev:*` version of the chosen skill (NOT the superpowers versions).
+14. **Transition** — after user approves, ask, in `conversation_language`, whether to build a PRD next (via `spec-driven-dev:prd`) or jump straight to implementation planning (via `spec-driven-dev:writing-plans`). Present the two options as a numbered list; keep the skill identifiers (`spec-driven-dev:prd`, `spec-driven-dev:writing-plans`) verbatim because they are command names. Invoke only the `spec-driven-dev:*` version of the chosen skill (NOT the `superpowers:*` versions).
 
 ## Process Flow
 

@@ -11,50 +11,52 @@ Produce a structured Product Requirements Document from an approved design, then
 <HARD-GATE>
 Do NOT start writing implementation plans, invoking writing-plans, or touching any code until prd.md is approved by the user.
 
-**Language:** All user-facing replies MUST use the user's input language. The user can switch language at any time by saying `lang:en`, `lang:zh-TW`, or simply writing in a different language. Default is Traditional Chinese (繁體中文).
+**Language policy (read carefully — most output bugs come from violating this):**
 
-**Document language:** The body prose of prd.md MUST be written in the same `doc_language` as the current change's design.md. If design.md has no `doc_language` frontmatter, use the user's conversation language.
+- `conversation_language` = the language the user wrote their first message in (or the language of design.md's frontmatter if this skill was invoked mid-pipeline). ALL user-facing prose (questions, prompts, transitions, error messages) MUST be rendered in this language. The user can switch by saying `lang:en`, `lang:zh-TW`, etc., or simply by writing in a different language — update `conversation_language` accordingly.
+- `doc_language` = the language used inside prd.md body prose. Read it from `openspec/changes/{change-id}/design.md` frontmatter. If design.md has no `doc_language`, default to `conversation_language`. Do NOT default to a fixed language; never override the value from design.md.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns ("requirement", "actor", "PRD" written inline in a Chinese sentence) unless that English token is a literal identifier (file path, code symbol, OpenSpec keyword, slash-command name like `/prd`, or a section anchor like `FR-001`). When in doubt, translate.
+- Every example sentence below is for your understanding only — do NOT echo any of them verbatim. Re-render every user-facing string in the active language.
 </HARD-GATE>
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Detect language** — read `doc_language` from `openspec/changes/{change-id}/design.md` frontmatter; fall back to user's conversation language.
-2. **Confirm change-id** — scan `openspec/changes/*/` for in-flight changes (has `design.md`, no `verification-report.md`). If exactly one found, use it. If multiple found, ask the user to choose. If none found, ask the user to specify.
-2.5. **Requirements Lens** — distil a requirements-perspective summary from design.md before generating the PRD.
+1. **Detect language** — read `doc_language` from `openspec/changes/{change-id}/design.md` frontmatter; if absent, fall back to `conversation_language`.
+2. **Confirm change-id** — scan `openspec/changes/*/` for in-flight changes (has `design.md`, no `verification-report.md`). If exactly one found, use it. If multiple found, ask the user — in `conversation_language` — to choose. If none found, ask the user to specify.
+2.5. **Requirements Lens** — distil a requirements-perspective summary from design.md before generating the PRD. This is an internal working artefact: do NOT write it to prd.md. It only shapes how you draft the PRD sections below.
 
-   Produce an internal summary covering these three items:
+   Produce an internal summary covering these three reframings:
 
-   - **識別真實 Actor** — 只保留人類角色（例如：行銷人員、系統管理員）。移除所有「as a system」或以系統元件為主詞的描述。
-     > 轉換範例：「Kafka consumer 接收 domain.events」→ Actor 列表只列「行銷人員」，移除 Kafka consumer。
+   - **Identify real actors.** Keep only human roles (e.g., marketing user, system administrator). Drop any "as a system" framing or system-component subjects.
+     - Example transformation: "Kafka consumer receives domain.events" → actor list shows only "marketing user"; the Kafka consumer is removed.
 
-   - **將技術描述轉為能力陳述** — 把實作語言改寫為可觀察的系統能力語言。
-     > 轉換範例：「消費 domain.events via Kafka」→「系統能即時回應使用者行為事件」
+   - **Convert technical descriptions into capability statements.** Rewrite implementation language as observable system capability language.
+     - Example transformation: "consume domain.events via Kafka" → "the system responds to user behaviour events in real time".
 
-   - **對應業務成果** — 說明每個功能領域交付什麼業務價值，而非技術實作細節。
-     > 轉換範例：「實作 Redis cache layer 降低 DB 查詢」→「使用者體驗流暢的即時反饋，不感受到等待延遲」
+   - **Map to business outcomes.** State the business value each functional area delivers, not the technical implementation.
+     - Example transformation: "implement a Redis cache layer to reduce DB queries" → "users experience smooth, immediate feedback with no perceived wait".
 
-   > **注意：此摘要為內部工作產物，不寫入 prd.md。僅作為後續 PRD 各節的生成輸入。**
-3. **Ask clarifying questions** — 3–5 questions with lettered options (A/B/C/D); user may reply `1A 2C 3B`. Focus on: Problem, Core Functionality, Scope, Success Criteria. Skip questions already answered in design.md.
+   The examples above are in English to illustrate the principle. When you produce the actual internal summary, write it in `doc_language` (since it feeds directly into PRD section drafting).
+3. **Ask clarifying questions** — 3–5 questions with lettered options (A/B/C/D); user may reply `1A 2C 3B`. Focus on: Problem, Core Functionality, Scope, Success Criteria. Skip questions already answered in design.md. Render the questions in `conversation_language`.
 4. **Generate PRD** — produce the full PRD using the structure below; write to `openspec/changes/{change-id}/prd.md`.
-5. **User review gate** — ask the user whether any section needs changes. Wait for confirmation before continuing.
+5. **User review gate** — ask the user, in `conversation_language`, whether any section needs changes. Wait for confirmation before continuing.
 6. **Commit** — after user approval:
    ```
    git add openspec/changes/{change-id}/prd.md
    git commit -m "docs: add PRD for {change-id}"
    ```
-7. **Transition** — prompt the user to choose the next step:
-   > "PRD committed. What's next?"
-   > 1. `writing-plans` — create implementation task list
-   > 2. `writing-figma` — produce Figma designs first
-   > 3. `writing-uml` — produce PlantUML diagrams first
+7. **Transition** — prompt the user, in `conversation_language`, to choose the next step from these three options (keep the skill identifiers verbatim because they are command names):
+   - `spec-driven-dev:writing-plans` — create the implementation task list
+   - `spec-driven-dev:writing-figma` — produce Figma designs first
+   - `spec-driven-dev:writing-uml` — produce PlantUML diagrams first
 
    Invoke the chosen `spec-driven-dev:*` skill.
 
 ## Clarifying Questions Format
 
-Ask questions in this format (adapt language to `doc_language`):
+Ask questions in this shape, rendered in `conversation_language`. The English wording below is illustrative — re-render it in the active language; do not paste it as-is.
 
 ```
 1. What is the primary problem this feature solves?
@@ -137,18 +139,21 @@ doc_language: {doc_language}
 ```
 
 **Writing rules:**
+
+Write all prd.md prose in `doc_language`. The Bad/Good examples below are illustrative — apply the same principle in `doc_language`, not by copying the example wording.
+
 - Acceptance criteria must be verifiable. "Works correctly" is bad. "Clicking Delete shows a confirmation dialog" is good.
 - FR entries must be unambiguous — number them for easy reference.
 - NFR and Technical Considerations are optional; omit entire sections for small features rather than leaving them empty.
 - Goals must be measurable where possible ("reduce X by 50%", not "improve X").
 - Non-Goals are as important as Goals — make scope boundaries explicit.
-- **Rule 1 — Acceptance Criteria: user-observable only.** Every AC must describe behavior or outcomes observable by a user or business stakeholder. Prohibited: class names, API field names, topic names, state machine enum values, third-party component names (e.g., ShedLock, Kafka, circuit breaker).
-  - Bad: `透過 REST API 建立 type=DISCOUNT 的活動，帶 ruleConfig、targetSpec`
-  - Good: `行銷人員可建立含折扣規則的活動，並指定目標受眾與觸達計畫`
-- **Rule 2 — Functional Requirements: capability, not implementation.** FR entries describe what the system must be able to do, not how it does it. No architecture terms, component names, or data schema references.
-  - Bad: `FR-008: reach.orchestrator 必須是 reach.requested topic 的唯一消費者`
-  - Good: `FR-008: 系統必須確保同一活動的觸達請求不重複執行`
-- **Rule 3 — Technical Considerations (Section 7): scope constraints only.** Section 7 may only contain constraints that limit the requirements scope (e.g., "本期僅提供後端 API，不含管理 UI"). Do not reproduce architecture decisions from design.md. If no such constraints exist, omit the section entirely.
+- **Rule 1 — Acceptance Criteria: user-observable only.** Every AC must describe behaviour or outcomes observable by a user or business stakeholder. Prohibited: class names, API field names, topic names, state-machine enum values, third-party component names (e.g., ShedLock, Kafka, circuit breaker).
+  - Bad: `Create a campaign with type=DISCOUNT via REST API, carrying ruleConfig and targetSpec`
+  - Good: `A marketing user can create a campaign that includes discount rules and specify the target audience and reach plan`
+- **Rule 2 — Functional Requirements: capability, not implementation.** FR entries describe what the system must be able to do, not how it does it. No architecture terms, component names, or data-schema references.
+  - Bad: `FR-008: reach.orchestrator must be the sole consumer of the reach.requested topic`
+  - Good: `FR-008: The system must ensure that reach requests for the same campaign are not executed more than once`
+- **Rule 3 — Technical Considerations (Section 7): scope constraints only.** Section 7 may only contain constraints that limit the requirements scope (e.g., "this iteration delivers only the backend API; no admin UI"). Do not reproduce architecture decisions from design.md. If no such constraints exist, omit the section entirely.
 
 ## Transition Handoff
 

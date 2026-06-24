@@ -10,7 +10,11 @@ Execute approved OpenSpec tasks by dispatching one implementer subagent per task
 <HARD-GATE>
 Every task in tasks.md must pass BOTH spec-reviewer AND code-quality-reviewer before being marked complete. No partial credit; both reviewers must explicitly approve.
 
-**Language:** All user-facing replies in this skill MUST use the user's input language; internal template strings (file paths, code blocks, OpenSpec keywords) stay in English. Reuse the language detected in proposal.md frontmatter or the first user message.
+**Language policy (read carefully — most output bugs come from violating this):**
+
+- `conversation_language` = the language of proposal.md's frontmatter, or the user's first message if no frontmatter is present. ALL user-facing prose (questions, prompts, transitions, error messages, abort messages) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns ("in-flight task", "resume", "task") unless that English token is a literal identifier (file path, code symbol, OpenSpec keyword, status enum like `in_progress`/`passing`/`blocked`, dispatch outcome like `BLOCKED`/`NEEDS_CONTEXT`/`DONE`/`APPROVE`, slash-command name). When in doubt, translate.
+- File paths, code blocks, OpenSpec structural keywords, status enums, subagent outcome tokens, and slash-command names always stay in English regardless of `conversation_language`.
 </HARD-GATE>
 
 > **Note:** This skill is parallel to `spec-driven-dev:test-driven-development` — user chooses one based on the change. Both read the same `openspec/changes/{change-id}/` artifacts. SDD favors multi-task parallelism with strict review gates; TDD favors red-green-refactor cycles per scenario.
@@ -19,13 +23,13 @@ Every task in tasks.md must pass BOTH spec-reviewer AND code-quality-reviewer be
 
 You MUST complete each item in order:
 
-1. **Detect language** — reuse from proposal.md frontmatter or the first user message. Lock for the conversation.
+1. **Detect language** — set `conversation_language` from proposal.md frontmatter or the first user message. Lock for the conversation.
 2. **Read change artifacts** — read tasks.md in full; read each referenced `specs/{capability}/spec.md` in full; skim any `diagrams/*.puml` and `designs/figma.md` if present.
 3. **In-flight precheck + single-in-progress assertion** — before dispatching any subagent:
-   - Scan tasks.md for `- status: in_progress` sub-bullets. If **more than one** task has `status: in_progress`, abort and report the violation: "tasks.md has multiple `in_progress` tasks — single-in-progress invariant violated. Resolve manually (flip stale entries to `blocked` or `not_started`) before re-invoking SDD." Do NOT auto-fix.
-   - If **exactly one** task has `status: in_progress`, prompt the user verbatim: "偵測到 in-flight task `{task-id}`，要 resume 還是改跑新 task？".
-     - On "resume" — invoke `spec-driven-dev:resume-change` and stop this run.
-     - On "新 task" — emit a warning that the in-flight task remains `in_progress` in tasks.md (preserved, not erased) and ask the user which task id to start instead, then proceed to step 4 with that task as the dispatch target.
+   - Scan tasks.md for `- status: in_progress` sub-bullets. If **more than one** task has `status: in_progress`, abort and report the violation, in `conversation_language`: explain that tasks.md has multiple `in_progress` tasks, that the single-in-progress invariant has been violated, and that the user must manually resolve it (flip stale entries to `blocked` or `not_started`) before re-invoking SDD. Do NOT auto-fix. Keep the status enum names (`in_progress`, `blocked`, `not_started`) in English; only the surrounding prose is translated.
+   - If **exactly one** task has `status: in_progress`, ask the user — phrased naturally in `conversation_language` — whether they want to resume the existing in-flight task `{task-id}` or start a different task. Render the literal `{task-id}` value inline; do not translate the identifier.
+     - If the user chooses to resume, invoke `spec-driven-dev:resume-change` and stop this run.
+     - If the user chooses to start a different task, warn (in `conversation_language`) that the in-flight task remains `in_progress` in tasks.md (preserved, not erased) and ask which task id to start instead, then proceed to step 4 with that task as the dispatch target.
    - If **no** task has `status: in_progress`, proceed silently to step 4.
 4. **Plan subagent dispatch** — from tasks.md, group tasks by independence:
    - `independent` / `parallel-safe` tasks can each run as a separate implementer subagent (but only ONE subagent in flight at a time per SDD discipline — fresh context per task)

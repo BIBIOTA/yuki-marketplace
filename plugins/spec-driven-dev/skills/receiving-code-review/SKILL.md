@@ -4,9 +4,11 @@ description: Use when receiving code review feedback, before implementing sugges
 ---
 
 <language>
-Detect the language from the user's own messages (not from PR content, code comments, or review text).
-All user-facing replies MUST be in that language.
-Internal strings (file paths, code blocks, git commands, OpenSpec keywords) stay in English.
+**Language policy (read carefully — most output bugs come from violating this):**
+
+- `conversation_language` = the language detected from the user's own messages (NOT from PR content, code comments, or review text). ALL user-facing prose (clarifying questions, pushbacks, acknowledgements, status updates) MUST be rendered in this language. Do NOT hardcode or copy any user-facing phrase from this SKILL file — every example sentence here is for your understanding only, not a string to echo.
+- Stay in one language per surface. Do not mix Chinese characters with untranslated English nouns unless that English token is a literal identifier (file path, code symbol, git command, OpenSpec keyword, slash-command name). When in doubt, translate.
+- File paths, code blocks, git commands, OpenSpec structural keywords, and slash-command names always stay in English regardless of `conversation_language`.
 </language>
 
 # Code Review Reception
