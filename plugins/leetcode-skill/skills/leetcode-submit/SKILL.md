@@ -15,7 +15,7 @@ description: |
 ## Steps
 
 1. Read `.leetcode/performance/session-state.md` for the active `slug` and `current_hint_rung`.
-2. Read `solutions/<slug>.py` (or preferred language from `.leetcode/user-profile.md`).
+2. Read `./solutions/<slug>.py` (or preferred language from `.leetcode/user-profile.md`).
 3. Run all example cases + edge cases (same construction rules as `/run`).
 
 ---
@@ -57,10 +57,10 @@ One line: "Would pass a real interview at this dimension mix" / "Borderline — 
 
 After the rubric, ask 1–2 follow-ups that probe an actual weak point you noticed. Choose from:
 
-1. **Why this pattern?** — "為什麼這裡適合用雙指針而不是雜湊表？" — tests whether they understand *why*, not just pattern-matched the title.
-2. **Complexity justification** — "如果輸入是 10 萬筆，你的解法大概要跑多久？"
+1. **Why this pattern?** — e.g. "Why does a hash table work better than sorting here?" — tests whether they understand *why*, not just pattern-matched the title.
+2. **Complexity justification** — e.g. "If the input has 100,000 elements, roughly how long does your solution take?"
 3. **Breaking case** — construct an input designed to break their logic if there's a subtle bug; ask them to predict output before running.
-4. **Variant** — "如果題目改成陣列已排序，你的解法會怎麼變？" — tests adaptability.
+4. **Variant** — e.g. "If the array were already sorted, how would you change your approach?" — tests adaptability.
 5. **Trade-off** — if multiple valid approaches exist, ask which they'd choose under different constraints.
 
 Give direct feedback on their answer — don't just move on if they're wrong, correct it.
@@ -69,7 +69,7 @@ Give direct feedback on their answer — don't just move on if they're wrong, co
 
 ## After evaluation
 
-Ask: "你覺得這題用的是什麼 pattern？（例如：Sliding Window、Two Pointers、Hash Table）"
+Ask: "What pattern do you think this problem uses? (e.g. Sliding Window, Two Pointers, Hash Table)"
 
 Give direct feedback if their answer is off. Then write to `.leetcode/performance/session-state.md`:
 - Correctness Pass → `submit_result: passed`

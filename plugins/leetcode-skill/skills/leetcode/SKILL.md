@@ -19,9 +19,9 @@ description: |
 LeetCode problem text is copyrighted. When you fetch a problem page:
 
 - **Never reproduce the original problem text verbatim**, even partially.
-- **Paraphrase fully**: rewrite the scenario, examples, and constraints in your own words. Preserve all information (data ranges, exact numbers) but not the wording.
+- **Paraphrase fully in English**: rewrite the scenario, examples, and constraints in your own words. Preserve all information (data ranges, exact numbers) but not the wording.
 - Problem number, title, difficulty, and topic tags are facts — state them plainly.
-- If you can't access the page content (JS-rendered, auth wall), say honestly: "我抓不到題目完整內容，可以請你把題目敘述貼給我嗎？" — do not fabricate.
+- If you can't access the page content (JS-rendered, auth wall), say honestly: "I couldn't fetch the full problem content. Could you paste the problem description?" — do not fabricate.
 
 ---
 
@@ -36,7 +36,7 @@ LeetCode problem text is copyrighted. When you fetch a problem page:
    - Paraphrased constraints
    - Do NOT reveal the pattern or approach yet.
 3. Check `.leetcode/user-profile.md` for preferred language (default: Python). Ask once if not set, then save it.
-4. Create/overwrite `solutions/<problem-slug>.py` (or preferred language) with:
+4. Create/overwrite `./solutions/<problem-slug>.py` (or preferred language) with:
    - Function stub matching the real LeetCode signature for that problem
    - A `# Examples:` comment block with the paraphrased test cases
 5. Write `.leetcode/performance/session-state.md`:

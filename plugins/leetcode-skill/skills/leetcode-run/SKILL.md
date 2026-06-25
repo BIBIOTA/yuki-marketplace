@@ -15,7 +15,7 @@ description: |
 ## Steps
 
 1. Read `.leetcode/performance/session-state.md` for the active `slug`, `run_attempts`, and `run_failures`.
-2. Read `solutions/<slug>.py` (or the preferred language from `.leetcode/user-profile.md`).
+2. Read `./solutions/<slug>.py` (or the preferred language from `.leetcode/user-profile.md`).
 3. Construct test cases:
    - The examples from the `# Examples:` block in the solution file.
    - 2–3 edge cases you construct: empty input, single element, boundary/max-constraint values — keep execution cheap (do not construct test cases that would time out).
@@ -30,4 +30,4 @@ description: |
    - Increment `run_attempts` by 1.
    - If any case failed, increment `run_failures` by 1.
 8. If `run_failures` reaches 3 or more, append after the results:
-   > 已連續失敗 N 次，要不要試試 `/hint` 獲得提示？
+   > Failed N times in a row — want to try `/hint` for a nudge?
