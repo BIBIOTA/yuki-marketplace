@@ -22,6 +22,7 @@ description: |
    > "Based on your history, **<Pattern>** needs the most work (struggle rate: X%, last practiced: <date>)."
 4. Suggest 2–3 well-known LeetCode problems in that category. For each, give:
    - Problem number + name
+   - Difficulty (Easy / Medium / Hard)
    - Slug (so they can construct the URL: `leetcode.com/problems/<slug>/`)
    - One-line description of why it's a good representative for this pattern
 5. Once the user provides a URL (or picks a suggestion), invoke the `leetcode` skill to start the session with `/leetcode <url>`.
