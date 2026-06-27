@@ -104,6 +104,19 @@ Section format:
 
 ---
 
+## Alternative Approaches
+
+Before showing the stats summary, present **2–3 alternative solutions** for the problem. For each:
+
+- **Name the approach** (e.g. "Two Pointers", "Monotonic Stack", "Binary Search on answer").
+- Show a concise implementation (≤20 lines; pseudocode is fine if the idea is clear).
+- State **Time / Space complexity** and compare to the user's solution.
+- One sentence on **when to prefer this** over the user's approach (e.g. "better when input is already sorted", "trades space for a O(n) speedup").
+
+Ordering rule: start from the approach closest to the user's solution, then progress toward the most optimal.
+
+---
+
 ## End
 
 Show the user a one-line stats summary: problems attempted, pass rate, current top weak area. Suggest `/next` if they want a targeted follow-up problem.
