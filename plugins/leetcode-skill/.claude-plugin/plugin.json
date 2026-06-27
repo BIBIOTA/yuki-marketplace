@@ -18,6 +18,7 @@
     "./skills/leetcode-run",
     "./skills/leetcode-submit",
     "./skills/leetcode-finish",
-    "./skills/leetcode-next"
+    "./skills/leetcode-next",
+    "./skills/leetcode-review"
   ]
 }

@@ -81,6 +81,32 @@ started: 2026-06-23T10:15
 
 Clear this file (or overwrite) when a problem is submitted or abandoned.
 
+## `.leetcode/performance/review-schedule.md`
+
+One section per attempted problem, upserted by `leetcode-finish` after every submit:
+
+```
+## 1. Two Sum
+- slug: two-sum
+- pattern: Hash Table
+- last_result: Passed
+- current_interval_days: 14
+- last_reviewed: 2026-06-28
+- due_date: 2026-07-12
+- consecutive_passes: 3
+
+## 3. Longest Substring Without Repeating Characters
+- slug: longest-substring-without-repeating-characters
+- pattern: Sliding Window
+- last_result: Struggled
+- current_interval_days: 1
+- last_reviewed: 2026-06-28
+- due_date: 2026-06-29
+- consecutive_passes: 0
+```
+
+Read by `leetcode-review` skill (`/review`) to surface the highest-priority problem due for re-attempt.
+
 ## `.leetcode/user-profile.md`
 
 ```

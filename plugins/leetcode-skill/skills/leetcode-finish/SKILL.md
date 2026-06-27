@@ -75,6 +75,33 @@ Clear the file — write: `# no active session`
 
 Increment `total_attempted`. Increment `total_passed` if result is `Passed` or `Passed (partial)`.
 
+### 6. `.leetcode/performance/review-schedule.md`
+
+Upsert a section for this problem (create file if missing). Compute the new interval:
+
+| Result | `current_interval_days` | `consecutive_passes` |
+|---|---|---|
+| `Passed` (hint rung ≤ 1) | `min(current × 2, 30)` | `+ 1` |
+| `Passed (partial)` | `1` | `0` |
+| `Struggled` | `1` | `0` |
+| `Gave up` | `1` | `0` |
+
+New entries (problem not yet in file) start with `current_interval_days: 1`, `consecutive_passes: 0`.
+
+Set `due_date = today + current_interval_days`.
+
+Section format:
+```
+## <number>. <name>
+- slug: <slug>
+- pattern: <pattern>
+- last_result: <result>
+- current_interval_days: <N>
+- last_reviewed: <today>
+- due_date: <due_date>
+- consecutive_passes: <N>
+```
+
 ---
 
 ## End
