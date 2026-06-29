@@ -16,10 +16,12 @@ description: |
 
 1. Read `.leetcode/performance/session-state.md` for: `current_problem`, `slug`, `current_hint_rung`, `submit_result`, `run_attempts`, `pattern`, `started`.
 2. Derive result automatically — do not ask the user:
-   - `submit_result: passed` + `current_hint_rung == 0` → **Passed**
-   - `submit_result: passed` + `current_hint_rung >= 1` → **Passed (partial)**
+   - `submit_result: passed` + `current_hint_rung == 0` + `run_failures < 3` → **Passed**
+   - `submit_result: passed` + (`current_hint_rung >= 1` OR `run_failures >= 3`) → **Passed (partial)**
    - `submit_result: partial` or `submit_result: fail` → **Struggled**
    - No `submit_result` (user never ran `/submit`) → **Gave up**
+
+   > Rationale: `run_failures >= 3` indicates the user relied heavily on test-case feedback to debug, which is equivalent in difficulty signal to using hints. The `/run` output (which test failed, what was returned) is a form of external guidance even if `/hint` was never invoked.
 3. Calculate time spent from `started` to now. If `started` is absent, omit the time field.
 4. Use `pattern` from session-state. If absent (user skipped `/submit`), leave the pattern field blank in logs.
 
@@ -43,7 +45,7 @@ Result values: `Passed`, `Passed (partial)`, `Struggled`, `Gave up`.
 
 Find the section for this pattern (create if missing). Update fields:
 - Increment `Attempts`
-- Increment `Solved cleanly` if hint rung ≤1 AND result is `Passed`
+- Increment `Solved cleanly` if hint rung ≤1 AND `run_failures < 3` AND result is `Passed`
 - Recompute `Struggle rate` = (Attempts − Solved cleanly) / Attempts × 100%
 - Update `Last attempted` to today's date
 - Recompute `Status`:
@@ -81,7 +83,7 @@ Upsert a section for this problem (create file if missing). Compute the new inte
 
 | Result | `current_interval_days` | `consecutive_passes` |
 |---|---|---|
-| `Passed` (hint rung ≤ 1) | `min(current × 2, 30)` | `+ 1` |
+| `Passed` (hint rung ≤ 1 AND run_failures < 3) | `min(current × 2, 30)` | `+ 1` |
 | `Passed (partial)` | `1` | `0` |
 | `Struggled` | `1` | `0` |
 | `Gave up` | `1` | `0` |
