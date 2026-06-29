@@ -79,14 +79,19 @@ Increment `total_attempted`. Increment `total_passed` if result is `Passed` or `
 
 ### 6. `.leetcode/performance/review-schedule.md`
 
-Upsert a section for this problem (create file if missing). Compute the new interval:
+Upsert a section for this problem (create file if missing). Compute the new interval using the raw session-state values (`current_hint_rung`, `run_failures`):
 
-| Result | `current_interval_days` | `consecutive_passes` |
-|---|---|---|
-| `Passed` (hint rung ≤ 1 AND run_failures < 3) | `min(current × 2, 30)` | `+ 1` |
-| `Passed (partial)` | `1` | `0` |
-| `Struggled` | `1` | `0` |
-| `Gave up` | `1` | `0` |
+| Result | 條件 | `current_interval_days` | `consecutive_passes` |
+|---|---|---|---|
+| `Passed` | hint_rung ≤ 1 AND run_failures < 3 | `min(current × 2, 30)` | `+ 1` |
+| `Passed (partial)` — light | hint_rung ≤ 1 AND run_failures < 5 | `3` | 不變（保持現值） |
+| `Passed (partial)` — heavy | hint_rung ≥ 2 OR run_failures ≥ 5 | `1` | `0` |
+| `Struggled` | — | `1` | `0` |
+| `Gave up` | — | `1` | `0` |
+
+> **Passed (partial) — light** 的定義：用了 ≤ 1 層 hint 且 /run 失敗 < 5 次，但因 code quality 或邊界條件等小問題未達 clean pass。這類題目掌握度接近合格，適合 3 天後再驗證，而非立刻隔天重做。
+>
+> **Passed (partial) — heavy** 的定義：用了 ≥ 2 層 hint 或 /run 失敗 ≥ 5 次，代表邏輯本身有重大疏漏，等同 Struggled，需 1 天後立即複習。
 
 New entries (problem not yet in file) start with `current_interval_days: 1`, `consecutive_passes: 0`.
 
