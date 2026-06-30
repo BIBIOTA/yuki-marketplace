@@ -75,7 +75,11 @@ Clear the file — write: `# no active session`
 
 ### 5. `.leetcode/user-profile.md`
 
-Increment `total_attempted`. Increment `total_passed` if result is `Passed` or `Passed (partial)`.
+Recompute from `log.md` — do NOT simply increment:
+- `total_attempted` = count of **unique** problem numbers in `log.md`
+- `total_passed` = count of unique problem numbers that have **at least one** entry with result `Passed` or `Passed (partial)`
+
+This prevents review sessions from inflating the stats — each problem is counted only once regardless of how many times it has been reviewed.
 
 ### 6. `.leetcode/performance/review-schedule.md`
 
