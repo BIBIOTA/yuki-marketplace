@@ -69,7 +69,7 @@ Give direct feedback on their answer — don't just move on if they're wrong, co
 
 ## After evaluation
 
-Ask: "What pattern do you think this problem uses? (e.g. Sliding Window, Two Pointers, Hash Table)"
+Ask: "What pattern do you think this problem uses?" — do NOT suggest any pattern name or give examples; let the user recall on their own.
 
 Give direct feedback if their answer is off. Then write to `.leetcode/performance/session-state.md`:
 - Correctness Pass → `submit_result: passed`
