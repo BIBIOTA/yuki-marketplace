@@ -25,6 +25,7 @@
     "./skills/gws-reference",
     "./skills/notion-article-import",
     "./skills/writing-skills",
-    "./skills/create-pr"
+    "./skills/create-pr",
+    "./skills/job-application-recommendation-letter"
   ]
 }
