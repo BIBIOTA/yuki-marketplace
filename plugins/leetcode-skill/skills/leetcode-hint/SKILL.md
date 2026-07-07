@@ -16,9 +16,14 @@ description: |
 
 Read `.leetcode/performance/session-state.md`:
 - `current_problem` — the active problem
+- `slug` — used to locate the solution file
 - `current_hint_rung` — which rung was last delivered (0 = no hints given yet)
 
 If the file is missing or shows no active session, respond: "No active problem session. Start one with `/leetcode <url>`."
+
+Then read `./solutions/<slug>.<ext>` (use the user's preferred language extension from `.leetcode/user-profile.md`). Note what the user has written so far:
+- If the file has meaningful code beyond the stub, tailor the hint to what they've attempted — point specifically at the part that's incomplete or incorrect rather than restarting from scratch.
+- If the file is still just the stub (no logic added), give the hint as normal without referencing it.
 
 ---
 

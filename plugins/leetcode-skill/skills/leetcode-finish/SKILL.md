@@ -131,3 +131,22 @@ Ordering rule: start from the approach closest to the user's solution, then prog
 ## End
 
 Show the user a one-line stats summary: problems attempted, pass rate, current top weak area. Suggest `/next` if they want a targeted follow-up problem.
+
+---
+
+## Commit & Push
+
+After displaying the stats summary, commit and push progress automatically:
+
+1. Stage the solution file and all updated tracking files:
+   ```
+   git add solutions/<slug>.<ext>
+   git add .leetcode/
+   ```
+2. Commit with message:
+   ```
+   leetcode: <number>. <name> — <result>
+   ```
+   Example: `leetcode: 1. Two Sum — Passed`
+3. Run `git push`.
+4. If `git push` fails (e.g. no remote, detached HEAD), show the error briefly but do not block — the session is still considered finished.
