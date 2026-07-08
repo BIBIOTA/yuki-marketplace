@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-07-08T20:00:00+08:00",
+  "plugin": {
+    "name": "spec-driven-dev",
+    "repository": "BIBIOTA/yuki-marketplace",
+    "path": "plugins/spec-driven-dev",
+    "initialCommit": {
+      "sha": "b2ab7a31ae5d99fbd0b7450c6b446fef2609e411",
+      "committedAt": "2026-05-28 15:00:03 +0800",
+      "subject": "feat: scaffold spec-driven-dev plugin"
+    }
+  },
+  "baselineMethod": "Use the latest upstream commit at or before the spec-driven-dev initial scaffold commit time.",
+  "upstreams": {
+    "superpowers": {
+      "repository": "https://github.com/obra/superpowers",
+      "baselineCommit": {
+        "sha": "f2cbfbefebbfef77321e4c9abc9e949826bea9d7",
+        "committedAt": "2026-05-04 15:05:01 -0700",
+        "subject": "Release v5.1.0 (#1468)"
+      }
+    },
+    "openspec": {
+      "repository": "https://github.com/Fission-AI/openspec",
+      "baselineCommit": {
+        "sha": "11b269061897b011075a984c6c95d970a5533a66",
+        "committedAt": "2026-05-28 06:54:51 +0000",
+        "subject": "test: split slow workspace open CI case (#1134)"
+      }
+    }
+  }
+}
