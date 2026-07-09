@@ -35,3 +35,20 @@ This document records the upstream version baseline that `spec-driven-dev` was o
   - `superpowers`: `f2cbfbefebbfef77321e4c9abc9e949826bea9d7..current`
   - `openspec`: `11b269061897b011075a984c6c95d970a5533a66..current`
 - The goal is to identify key upstream differences across that version gap that are relevant to `spec-driven-dev`, then judge whether they should be absorbed into the plugin.
+- Before flagging a difference, cross-check it against the **Absorbed upstream changes** log below — already-absorbed items should not be re-raised.
+
+## Absorbed upstream changes
+
+Log of upstream changes that have been reviewed and deliberately absorbed into `spec-driven-dev`, so later reviews do not re-flag them.
+
+### 2026-07-09 — superpowers v6.0.0
+
+- **Single reviewer / dual verdict** — merged the separate `spec-reviewer-prompt.md` and `code-quality-reviewer-prompt.md` in `subagent-driven-development` into one `task-reviewer-prompt.md` that returns a spec-compliance verdict and a code-quality verdict in a single read-only pass. The SDD review loop is now two-stage (implementer → task-reviewer).
+- **Plan task contract** — `writing-plans` now captures cross-task **Global Constraints** and a per-task **Interfaces** field, and adds **task right-sizing** guidance. Both new fields flow through the `subagent-driven-development` context bundle to implementers and the task-reviewer.
+
+### Reviewed but NOT absorbed (not applicable to this plugin's architecture)
+
+- **superpowers v6.0.3 `.git/sdd` → `.superpowers/sdd`** — `spec-driven-dev` never wrote scratch/ledger state under `.git/`; progress lives in `openspec/changes/{change-id}/progress.md`. No change needed.
+- **superpowers v6.1.1 Codex `hooks: {}`** — this marketplace's `.codex-plugin/plugin.json` is metadata-only with no SessionStart hook, so the auto-discovery conflict does not apply.
+- **OpenSpec OPSX quick-path narrative (`/opsx:new` → `/opsx:propose` etc.)** — `spec-driven-dev` runs its own skill pipeline and only invokes `openspec validate` / `openspec archive`; it is not built on the `opsx` slash-command workflow.
+- **OpenSpec Stores beta** — direction noted; kept under observation rather than absorbed while the CLI/JSON shape is still beta.

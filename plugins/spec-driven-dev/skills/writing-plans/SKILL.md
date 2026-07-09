@@ -30,9 +30,12 @@ You MUST create a task for each of these items and complete them in order:
      - If the user chooses to start a new change, warn (in `conversation_language`) that the in-flight change's progress is preserved but this session switches context, then proceed to step 3.
 3. **Read `openspec/changes/{change-id}/design.md`** completely.
 4. **Validate change-id and directory exist.** If not, escalate: "design.md not found — return to spec-driven-dev:brainstorming."
-5. **Decompose into bite-sized tasks.** Each task entry must include:
+5. **Capture Global Constraints, then decompose into right-sized tasks.**
+   First, record any **Global Constraints** that apply to every task — tech-stack rules, coding conventions, security/performance non-negotiables, or invariants carried over from design.md that no task may violate. These go in a `## Global Constraints` section at the top of tasks.md and are passed into every subagent context bundle downstream, so an implementer never has to re-derive them.
+   Then decompose. **Right-size each task**: small enough to implement and review in one focused subagent dispatch, but large enough to deliver a coherent, independently verifiable slice — as a rule of thumb, one task maps to roughly one requirement's worth of behavior across a handful of files. Split a task that spans multiple unrelated interfaces; merge a task too trivial to review on its own. Each task entry must include:
    - Imperative title (e.g., "Add /login POST endpoint")
    - Acceptance criteria using `WHEN ... THEN ...` (and optionally `AND`) format
+   - Interfaces: the concrete contract this task exposes and/or consumes — function/method signatures, endpoint shapes, event names, or data schemas — so dependent tasks and the task-reviewer can check conformance without re-reading the implementation (write `none` if the task exposes no interface)
    - Dependencies: list any prerequisite task numbers
    - Independence estimate (note as `independent`, `serial`, or `parallel-safe` — used by downstream SDD/TDD selection)
 6. **Confirm optional artifacts** — ask, in `conversation_language`, whether this change requires any of the following artifacts before implementation. Present as a multi-select with these two options (keep the skill identifiers verbatim because they are command names):
@@ -100,14 +103,20 @@ Use this template when writing `openspec/changes/{change-id}/tasks.md`:
 ````markdown
 # Tasks: {change-id}
 
+## Global Constraints
+- {Constraint that applies to every task, e.g. "All new endpoints go through the existing auth middleware"}
+- {e.g. "No new runtime dependencies without approval"}
+
 ## 1. {Group name}
 - [ ] 1.1 {Task description}
   - Acceptance: WHEN {context} THEN {expected outcome}
+  - Interfaces: {signatures / endpoint shapes / event names / data schemas this task exposes or consumes, or `none`}
   - Depends on: -
   - Independence: independent | serial | parallel-safe
   - status: not_started
 - [ ] 1.2 {Task description}
   - Acceptance: WHEN {context} THEN {expected outcome}
+  - Interfaces: {contract exposed/consumed, or `none`}
   - Depends on: 1.1
   - Independence: serial
   - status: not_started
@@ -151,7 +160,7 @@ Single-in-progress invariant: across all tasks in a change, at most ONE task may
 After writing tasks.md, apply these four checks. Fix any issues inline — no re-review needed after fixing.
 
 1. **Placeholder scan:** Any "TBD", "TODO", incomplete acceptance criteria, or missing dependency references? Fix.
-2. **Consistency check:** Do task groupings match the architecture sections in design.md? Do acceptance criteria contradict each other? Fix.
+2. **Consistency check:** Do task groupings match the architecture sections in design.md? Do acceptance criteria contradict each other? Do the Global Constraints and per-task Interfaces agree with design.md and with each other (no task exposing an interface another task contradicts)? Fix.
 3. **Scope check:** Are tasks scoped to the current change-id? Remove anything belonging to a different change. Fix.
 4. **Ambiguity check:** Could any WHEN/THEN criterion be interpreted two different ways? Pick one interpretation, make it explicit. Fix.
 
