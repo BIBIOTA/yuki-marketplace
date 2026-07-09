@@ -1,14 +1,14 @@
 ---
 name: subagent-driven-development
-description: Use when spec is approved and implementation should run with multi-subagent dispatch - reads openspec/changes/{change-id}/ (tasks.md, specs/, diagrams/, designs/) and assigns one implementer subagent per independent task, followed by spec-reviewer and code-quality-reviewer subagents that verify the work against the OpenSpec scenarios plus referenced UML diagrams and Figma designs.
+description: Use when spec is approved and implementation should run with multi-subagent dispatch - reads openspec/changes/{change-id}/ (tasks.md, specs/, diagrams/, designs/) and assigns one implementer subagent per independent task, followed by a single task-reviewer subagent that returns both a spec-compliance verdict (against the OpenSpec scenarios plus referenced UML diagrams and Figma designs) and a code-quality verdict.
 ---
 
 # Subagent-Driven Development
 
-Execute approved OpenSpec tasks by dispatching one implementer subagent per task, followed by mandatory spec-reviewer and code-quality-reviewer subagents before marking any task complete.
+Execute approved OpenSpec tasks by dispatching one implementer subagent per task, followed by a mandatory task-reviewer subagent that returns both a spec-compliance and a code-quality verdict before marking any task complete.
 
 <HARD-GATE>
-Every task in tasks.md must pass BOTH spec-reviewer AND code-quality-reviewer before being marked complete. No partial credit; both reviewers must explicitly approve.
+Every task in tasks.md must receive a task-reviewer review in which BOTH the spec-compliance verdict AND the code-quality verdict are ✅ before being marked complete. No partial credit; a ❌ on either verdict sends the task back to the implementer.
 
 **Language policy (read carefully — most output bugs come from violating this):**
 
@@ -39,14 +39,15 @@ You MUST complete each item in order:
    - Task description (verbatim from the tasks.md item N.M)
    - Acceptance criteria (the `#### Scenario: ...` WHEN/THEN/AND blocks from the relevant spec.md)
    - Referenced spec requirement excerpt (the full `### Requirement: ...` block)
+   - Global Constraints: verbatim copy of the `## Global Constraints` section from tasks.md, if present
+   - Interfaces: the task's `- Interfaces:` sub-bullet from tasks.md, if present
    - Referenced diagrams: for each `> See: ...` pointing to a `.puml` file, embed the FULL `.puml` content in the bundle (do not just pass the path)
    - Referenced design section: for each `> See: ../../designs/figma.md#...`, embed the figma.md section text plus the local screenshot path(s)
-6. **Three-stage review loop** per task:
+6. **Two-stage review loop** per task:
    a. **Implementer subagent** — before dispatching: (i) flip the target task's `- status:` line in tasks.md from `not_started` (or `blocked`, on resume) to `in_progress`, and (ii) append a Session entry to `openspec/changes/{change-id}/progress.md` with `Stage: SDD`, the task id, `Transition: not_started → in_progress` (or `blocked → in_progress` on resume), and a `Next action` line describing what the implementer will do. Then dispatch the subagent with the context bundle + `./implementer-prompt.md`; the subagent writes code, tests, and commits. See the *progress.md Session entry template* below for the exact format.
-   b. **Spec reviewer subagent** — dispatch with `./spec-reviewer-prompt.md`; verifies code matches scenarios, diagrams, and designs; if ❌ → implementer subagent fixes → re-review
-   c. **Code quality reviewer subagent** — dispatch with `./code-quality-reviewer-prompt.md`; assesses craft and maintainability; if ❌ → implementer subagent fixes → re-review
-   d. **Mark task complete** — ONLY when both reviewers ✅: (i) flip the task's `- status:` line in tasks.md from `in_progress` to `passing` and check the `- [x]` box, and (ii) append a Session entry to `openspec/changes/{change-id}/progress.md` with `Stage: SDD`, the task id, `Transition: in_progress → passing`, an `Evidence` block listing the implementer commit hash(es) plus the spec-reviewer and code-quality-reviewer outcomes (both APPROVE), and a `Next action` line pointing at the next task id (or `verification-before-completion` if this is the last task).
-   e. **BLOCKED path** — if the implementer returns `BLOCKED` (or `NEEDS_CONTEXT` that cannot be resolved in this session): (i) flip the task's `- status:` line in tasks.md from `in_progress` to `blocked`, and (ii) append a Session entry to `openspec/changes/{change-id}/progress.md` with `Stage: SDD`, the task id, `Transition: in_progress → blocked`, the verbatim blocker description from the implementer report under `Blockers:`, and a `Next action` line describing what is needed to unblock (e.g. "fetch missing API contract from upstream team", "user decides between approach A/B"). Stop the loop; do NOT advance to the spec-reviewer for a blocked task.
+   b. **Task reviewer subagent** — dispatch with `./task-reviewer-prompt.md`; in one read-only pass it returns a spec-compliance verdict (code matches scenarios, diagrams, and designs) AND a code-quality verdict (craft and maintainability); if either verdict is ❌ → implementer subagent fixes the listed items → re-review
+   c. **Mark task complete** — ONLY when the task-reviewer returns both verdicts ✅: (i) flip the task's `- status:` line in tasks.md from `in_progress` to `passing` and check the `- [x]` box, and (ii) append a Session entry to `openspec/changes/{change-id}/progress.md` with `Stage: SDD`, the task id, `Transition: in_progress → passing`, an `Evidence` block listing the implementer commit hash(es) plus the task-reviewer outcome (spec-compliance ✅ + code-quality ✅), and a `Next action` line pointing at the next task id (or `verification-before-completion` if this is the last task).
+   d. **BLOCKED path** — if the implementer returns `BLOCKED` (or `NEEDS_CONTEXT` that cannot be resolved in this session): (i) flip the task's `- status:` line in tasks.md from `in_progress` to `blocked`, and (ii) append a Session entry to `openspec/changes/{change-id}/progress.md` with `Stage: SDD`, the task id, `Transition: in_progress → blocked`, the verbatim blocker description from the implementer report under `Blockers:`, and a `Next action` line describing what is needed to unblock (e.g. "fetch missing API contract from upstream team", "user decides between approach A/B"). Stop the loop; do NOT advance to the task-reviewer for a blocked task.
 7. **Final pass** after all tasks complete:
    - Run any cross-task integration tests
    - Confirm tasks.md has all items checked and every task carries `status: passing`
@@ -70,12 +71,9 @@ digraph subagent_driven_development {
     "Dispatch implementer subagent\n(./implementer-prompt.md)" [shape=box];
     "Implementer done?" [shape=diamond];
     "Flip task status to blocked\n+ append progress.md Session\n(Transition: in_progress → blocked)" [shape=box];
-    "Dispatch spec reviewer subagent\n(./spec-reviewer-prompt.md)" [shape=box];
-    "Spec compliant?" [shape=diamond];
-    "Implementer fixes spec gaps" [shape=box];
-    "Dispatch code quality reviewer\n(./code-quality-reviewer-prompt.md)" [shape=box];
-    "Quality approved?" [shape=diamond];
-    "Implementer fixes quality issues" [shape=box];
+    "Dispatch task reviewer subagent\n(./task-reviewer-prompt.md)" [shape=box];
+    "Both verdicts approve?\n(spec + quality)" [shape=diamond];
+    "Implementer fixes review findings" [shape=box];
     "Mark task complete in tasks.md\n(status: passing)\n+ append progress.md Session\n(Transition: in_progress → passing)" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Run integration tests\nopenspec validate --strict" [shape=box];
@@ -91,15 +89,11 @@ digraph subagent_driven_development {
     "Flip task status to in_progress\n+ append progress.md Session\n(Transition: not_started → in_progress)" -> "Dispatch implementer subagent\n(./implementer-prompt.md)";
     "Dispatch implementer subagent\n(./implementer-prompt.md)" -> "Implementer done?";
     "Implementer done?" -> "Flip task status to blocked\n+ append progress.md Session\n(Transition: in_progress → blocked)" [label="BLOCKED / NEEDS_CONTEXT"];
-    "Implementer done?" -> "Dispatch spec reviewer subagent\n(./spec-reviewer-prompt.md)" [label="DONE / DONE_WITH_CONCERNS"];
-    "Dispatch spec reviewer subagent\n(./spec-reviewer-prompt.md)" -> "Spec compliant?";
-    "Spec compliant?" -> "Implementer fixes spec gaps" [label="no"];
-    "Implementer fixes spec gaps" -> "Dispatch spec reviewer subagent\n(./spec-reviewer-prompt.md)" [label="re-review"];
-    "Spec compliant?" -> "Dispatch code quality reviewer\n(./code-quality-reviewer-prompt.md)" [label="yes"];
-    "Dispatch code quality reviewer\n(./code-quality-reviewer-prompt.md)" -> "Quality approved?";
-    "Quality approved?" -> "Implementer fixes quality issues" [label="no"];
-    "Implementer fixes quality issues" -> "Dispatch code quality reviewer\n(./code-quality-reviewer-prompt.md)" [label="re-review"];
-    "Quality approved?" -> "Mark task complete in tasks.md\n(status: passing)\n+ append progress.md Session\n(Transition: in_progress → passing)" [label="yes"];
+    "Implementer done?" -> "Dispatch task reviewer subagent\n(./task-reviewer-prompt.md)" [label="DONE / DONE_WITH_CONCERNS"];
+    "Dispatch task reviewer subagent\n(./task-reviewer-prompt.md)" -> "Both verdicts approve?\n(spec + quality)";
+    "Both verdicts approve?\n(spec + quality)" -> "Implementer fixes review findings" [label="no (either ❌)"];
+    "Implementer fixes review findings" -> "Dispatch task reviewer subagent\n(./task-reviewer-prompt.md)" [label="re-review"];
+    "Both verdicts approve?\n(spec + quality)" -> "Mark task complete in tasks.md\n(status: passing)\n+ append progress.md Session\n(Transition: in_progress → passing)" [label="yes"];
     "Mark task complete in tasks.md\n(status: passing)\n+ append progress.md Session\n(Transition: in_progress → passing)" -> "More tasks remain?";
     "More tasks remain?" -> "Build context bundle for task N" [label="yes"];
     "More tasks remain?" -> "Run integration tests\nopenspec validate --strict" [label="no"];
@@ -120,6 +114,12 @@ Populate this template for each task before dispatching the implementer subagent
 
 ## Referenced Spec Requirement
 {Verbatim copy of the ### Requirement: ... block from spec.md}
+
+## Global Constraints
+{Verbatim copy of the ## Global Constraints section from tasks.md, if present}
+
+## Interfaces
+{The task's - Interfaces: sub-bullet from tasks.md, if present}
 
 ## Referenced Diagrams
 {For each diagram referenced via > See: ..., embed the full .puml content here}
@@ -152,7 +152,7 @@ Every status transition driven by SDD MUST append one Session block to `openspec
 
 Field rules:
 
-- `Transition` MUST be one of `not_started → in_progress` (step 6.a dispatch), `blocked → in_progress` (step 6.a resume), `in_progress → passing` (step 6.d mark complete), or `in_progress → blocked` (step 6.e BLOCKED path). Any other transition is a state-machine violation per `writing-plans`.
+- `Transition` MUST be one of `not_started → in_progress` (step 6.a dispatch), `blocked → in_progress` (step 6.a resume), `in_progress → passing` (step 6.c mark complete), or `in_progress → blocked` (step 6.d BLOCKED path). Any other transition is a state-machine violation per `writing-plans`.
 - `Evidence` is required on `in_progress → passing` (commits + reviewer outcomes) and recommended on `in_progress → blocked` (commits made so far, if any).
 - `Next action` MUST be a non-empty single sentence on every entry — the `verification-before-completion` Stage 2 gate fails the change if the last Session block has an empty `Next action`.
 - `Blockers` is required on `in_progress → blocked` and omitted otherwise.
@@ -160,14 +160,13 @@ Field rules:
 ## Prompt Templates
 
 - `./implementer-prompt.md` — dispatch implementer subagent with context bundle
-- `./spec-reviewer-prompt.md` — dispatch spec compliance reviewer after implementation
-- `./code-quality-reviewer-prompt.md` — dispatch code quality reviewer after spec passes
+- `./task-reviewer-prompt.md` — dispatch the task reviewer after implementation; returns spec-compliance + code-quality verdicts in one read-only pass
 
 ## Self-Review
 
 After completing all tasks, apply these four checks. Fix any issues inline.
 
-1. **Coverage check:** Every tasks.md item is marked complete? Every task had both reviewers approve?
+1. **Coverage check:** Every tasks.md item is marked complete? Every task's task-reviewer returned both verdicts (spec-compliance + code-quality) as ✅?
 2. **Consistency check:** Do committed changes match the scenarios and diagrams specified in spec.md?
 3. **Scope check:** Were any features added beyond what the spec requires? Flag and remove.
 4. **Validation check:** Did `openspec validate {change-id} --strict` exit 0?
