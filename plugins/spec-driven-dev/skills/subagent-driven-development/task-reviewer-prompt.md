@@ -41,12 +41,11 @@ Read the actual code. Do not accept the implementer's claims at face value.
 
 Each check MUST be performed:
 
-1. **Scenario coverage:** Every `#### Scenario:` block in the cited requirement has a matching test case. Test names should map to scenario names.
+1. **Scenario coverage:** Every `#### Scenario:` block in the cited requirement is covered by both the implementation and a matching test case (test names should map to scenario names) — none left unimplemented or untested.
 2. **Diagram contract:** Each referenced diagram's contract is reflected in code — sequence message order matches call order, state machine transitions match conditional logic, ER schema entities match migrations/models, class structure matches interfaces.
 3. **Design contract:** Each referenced design state (happy path, empty state, error state, loading state, etc.) is implemented; the implementation should render correctly for each state defined in the figma.md section.
 4. **Interface & constraint conformance:** The implementation honors the task's declared Interfaces and does not violate any Global Constraint from tasks.md.
 5. **No extra features** beyond what the scenarios specify — no over-engineering, no unrequested "nice to haves".
-6. **No missing scenarios** — every scenario in the requirement is covered by the implementation and its tests.
 
 ## Part B — Code Quality
 
@@ -63,9 +62,9 @@ Each check MUST be performed:
 Report both parts in one message.
 
 **Spec compliance:**
-- Pass or fail for each of the 6 checks in Part A
+- Pass or fail for each of the 5 checks in Part A
 - For each failure: actionable feedback with file:line references where possible
-- Verdict: ✅ Spec compliant — all 6 checks pass — or ❌ Spec issues — list specifically what is missing or extra, with file:line references
+- Verdict: ✅ Spec compliant — all 5 checks pass — or ❌ Spec issues — list specifically what is missing or extra, with file:line references
 
 **Code quality:**
 - Strengths (brief — what was done well)
