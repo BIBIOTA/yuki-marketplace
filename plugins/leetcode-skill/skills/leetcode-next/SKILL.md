@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Next Problem
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all explanations, suggestions, and status messages.
+
 ## Triggers
 
 - `/next`

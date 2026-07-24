@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Finish
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all summaries, alternative approach explanations, and status messages.
+
 ## Trigger
 
 `/finish` — wrap up the current problem session after submitting or giving up.

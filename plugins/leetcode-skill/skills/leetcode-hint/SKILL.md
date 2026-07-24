@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Hint
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all hints, feedback, and status messages.
+
 ## Trigger
 
 `/hint` — request the next level of hint during an active session.
@@ -19,7 +23,7 @@ Read `.leetcode/performance/session-state.md`:
 - `slug` — used to locate the solution file
 - `current_hint_rung` — which rung was last delivered (0 = no hints given yet)
 
-If the file is missing or shows no active session, respond: "No active problem session. Start one with `/leetcode <url>`."
+If the file is missing or shows no active session, respond: "目前沒有進行中的題目，請先用 `/leetcode <url>` 開始一題。"
 
 Then read `./solutions/<slug>.<ext>` (use the user's preferred language extension from `.leetcode/user-profile.md`). Note what the user has written so far:
 - If the file has meaningful code beyond the stub, tailor the hint to what they've attempted — point specifically at the part that's incomplete or incorrect rather than restarting from scratch.
@@ -42,6 +46,19 @@ Then read `./solutions/<slug>.<ext>` (use the user's preferred language extensio
    - Confirm before delivering: "Should I walk through the full solution logic? That's pretty close to the answer itself."
 
 After delivering the hint, increment `current_hint_rung` in `.leetcode/performance/session-state.md`.
+
+---
+
+## Code review requests outside `/hint`
+
+When the user asks you to review their code, point out errors, or explain what's wrong — **outside** of a `/hint` call — the content you provide may implicitly contain hint-level information. Apply the following rules:
+
+- If your response covers **what the problem is really asking or a key property** → counts as Rung 1.
+- If your response names **a general technique or pattern** → counts as Rung 2.
+- If your response describes **the shape of the solution** (what state to track, loop invariants, pointer roles) → counts as Rung 3.
+- If your response gives **pseudocode, concrete steps, or near-complete logic** (e.g. "do X in the while loop, then add Y outside") → counts as Rung 4.
+
+After answering such a code review question, **set `current_hint_rung` to the highest rung that was implicitly covered**, if it is higher than the current value. Do this silently — do not announce the update unless the user asks.
 
 ---
 

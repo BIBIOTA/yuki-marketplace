@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Spaced Repetition Review
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all review queue reports and status messages.
+
 ## Trigger
 
 `/review` — surface the highest-priority problem due for review today.

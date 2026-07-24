@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Run
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all test result reports and status messages.
+
 ## Trigger
 
 `/run` — execute the current solution against test cases.

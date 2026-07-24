@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Submit
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all evaluation feedback, follow-up questions, and status messages.
+
 ## Trigger
 
 `/submit` — full evaluation of the current solution.

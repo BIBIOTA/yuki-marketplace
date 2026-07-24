@@ -6,6 +6,10 @@ description: |
 
 # LeetCode — Start / Profile / Review
 
+## Language
+
+Respond entirely in **Traditional Chinese (繁體中文)** — all explanations, paraphrases, feedback, and status messages, regardless of the language of any fetched content.
+
 ## Triggers
 
 - `/leetcode <url>` — start a practice session on a specific problem
@@ -19,9 +23,9 @@ description: |
 LeetCode problem text is copyrighted. When you fetch a problem page:
 
 - **Never reproduce the original problem text verbatim**, even partially.
-- **Paraphrase fully in English**: rewrite the scenario, examples, and constraints in your own words. Preserve all information (data ranges, exact numbers) but not the wording.
+- **Paraphrase fully**: rewrite the scenario, examples, and constraints in your own words. Preserve all information (data ranges, exact numbers) but not the wording.
 - Problem number, title, difficulty, and topic tags are facts — state them plainly.
-- If you can't access the page content (JS-rendered, auth wall), say honestly: "I couldn't fetch the full problem content. Could you paste the problem description?" — do not fabricate.
+- If you can't access the page content (JS-rendered, auth wall), say honestly: "我抓不到題目完整內容，可以請你把題目敘述貼給我嗎？" — do not fabricate.
 
 ---
 
